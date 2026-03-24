@@ -18,6 +18,7 @@ jobs:
       VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID || 'placeholder_project' }}
       SUPABASE_URL: ${{ secrets.SUPABASE_URL || 'https://placeholder.supabase.co' }}
       SUPABASE_KEY: ${{ secrets.SUPABASE_ANON_KEY || 'placeholder_key' }}
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}   # <--- aqui, adiciona o token
 
     steps:
       - uses: actions/checkout@v4
@@ -26,7 +27,7 @@ jobs:
         run: npm ci
 
       - name: Install Vercel CLI
-        run: npm install -g vercel@latest
+        run: npm install -g vercel
 
       - name: Generate environment.ts
         run: |
@@ -39,13 +40,13 @@ jobs:
           };
           EOF
 
-      - name: Build Angular App
+      - name: Build
         run: npm run build
 
-      - name: Deploy to Vercel
+      - name: Deploy
         run: |
-          if [ -n "${VERCEL_TOKEN}" ]; then
-            vercel --prod --token $VERCEL_TOKEN --confirm
+          if [ -n "$VERCEL_TOKEN" ]; then
+            vercel deploy --prod --token $VERCEL_TOKEN --confirm
           else
             echo "Skipping deploy (no VERCEL_TOKEN)"
           fi

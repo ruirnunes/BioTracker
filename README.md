@@ -157,4 +157,4 @@ This project is for educational purposes.
 
 ## Author 
 
-Rui Nunes.
+Rui Nunes

@@ -1,0 +1,33 @@
+version: "3.9"
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: biotracker-frontend
+    ports:
+      - "4200:80"   # 4200 no host → 80 no container
+    depends_on:
+      - backend
+    environment:
+      API_URL: ${API_URL}  # se precisares de variáveis para o frontend
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: biotracker-backend
+    ports:
+      - "3000:3000"
+    environment:
+      SUPABASE_URL: ${SUPABASE_URL}
+      SUPABASE_KEY: ${SUPABASE_KEY}
+    volumes:
+      - ./backend:/app/backend:rw
+    command: npm run start
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"] 
+      interval: 10s
+      timeout: 5s
+      retries: 5

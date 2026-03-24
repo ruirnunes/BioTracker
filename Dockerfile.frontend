@@ -1,0 +1,23 @@
+# Stage 1: Build do Angular
+FROM node:20-alpine AS build
+
+WORKDIR /app
+
+# Copiar package.json e instalar dependências
+COPY frontend/package*.json ./ 
+RUN npm ci
+
+# Copiar todo o frontend
+COPY frontend/ ./frontend/
+
+WORKDIR /app/frontend
+RUN npm run build -- --output-path=dist/browser --configuration production
+
+# Stage 2: Servir com Nginx
+FROM nginx:alpine
+
+COPY --from=build /app/frontend/dist/browser /usr/share/nginx/html
+
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]

@@ -1,137 +1,175 @@
-// backend/src/controllers/sightingsController.ts
-import express from 'express';
-import type { Request, Response } from 'express'; // only import types
+import type { Request, Response } from 'express';
 import supabase from '../supabaseClient.js';
 
-// Interface for a sighting
 interface Sighting {
   id?: string;
   user_id?: string;
-  common_name: string;
-  genus: string;
-  species: string;
-  type: 'animal' | 'plant' | 'fungus';
-  location: string;
-  date: string;
+  species_id?: string;
+  location?: string;
+  date?: string;
   image_url?: string;
-  created_at?: string;
 }
 
-// Get all sightings
+// GET all sightings (apenas do utilizador logado)
 export const getSightings = async (req: Request, res: Response) => {
+  const user = (req as any).user;
+
   const { data, error } = await supabase
     .from('sightings')
-    .select('*') as { data: Sighting[] | null; error: any };
+    .select(`
+      id,
+      species_id,
+      location,
+      date,
+      image_url,
+      species:species_id (
+        id,
+        common_name,
+        genus,
+        species,
+        type
+      )
+    `)
+    .eq('user_id', user.id);
 
   if (error) return res.status(500).json({ error: error.message });
+
   res.json(data);
 };
 
-// Get a single sighting by id
+// GET one sighting (apenas do owner)
 export const getSightingById = async (req: Request, res: Response) => {
+  const user = (req as any).user;
   const { id } = req.params;
+
   const { data, error } = await supabase
     .from('sightings')
-    .select('*')
+    .select(`
+      id,
+      species_id,
+      location,
+      date,
+      image_url,
+      species:species_id (
+        id,
+        common_name,
+        genus,
+        species,
+        type
+      )
+    `)
     .eq('id', id)
-    .single() as { data: Sighting | null; error: any };
+    .eq('user_id', user.id)
+    .single();
 
-  if (error || !data) return res.status(404).json({ error: 'Sighting not found' });
+  if (error || !data) {
+    return res.status(404).json({ error: 'Sighting not found' });
+  }
+
   res.json(data);
 };
 
-// Create a new sighting
+// CREATE
 export const createSighting = async (req: Request, res: Response) => {
-  const { user_id, common_name, genus, species, type, location, date, image_url } = req.body as Sighting;
+  const user = (req as any).user;
 
-  if (!common_name || !genus || !species || !type || !location || !date) {
+  const { species_id, location, date, image_url } = req.body as Sighting;
+
+  if (!species_id || !location || !date) {
     return res.status(400).json({ error: 'Missing required fields' });
   }
 
   const { data, error } = await supabase
     .from('sightings')
-    .insert([{
-      user_id,
-      common_name,
-      genus,
-      species,
-      type,
-      location,
-      date,
-      image_url
-    }])
-    .select() as { data: Sighting[] | null; error: any };
+    .insert([
+      {
+        user_id: user.id,
+        species_id,
+        location,
+        date,
+        image_url
+      }
+    ])
+    .select()
+    .single();
 
   if (error) return res.status(500).json({ error: error.message });
-  res.status(201).json(data![0]);
+
+  res.status(201).json(data);
 };
 
-// Update an existing sighting
+// UPDATE (owner only) — versão segura
 export const updateSighting = async (req: Request, res: Response) => {
+  const user = (req as any).user;
   const { id } = req.params;
-  const { common_name, genus, species, type, location, date, image_url } = req.body as Sighting;
+
+  const { species_id, location, date, image_url } = req.body as Sighting;
+
+  const updatePayload: any = {};
+
+  if (species_id !== undefined) updatePayload.species_id = species_id;
+  if (location !== undefined) updatePayload.location = location;
+  if (date !== undefined) updatePayload.date = date;
+  if (image_url !== undefined) updatePayload.image_url = image_url;
 
   const { data, error } = await supabase
     .from('sightings')
-    .update({ common_name, genus, species, type, location, date, image_url })
+    .update(updatePayload)
     .eq('id', id)
-    .select() as { data: Sighting[] | null; error: any };
+    .eq('user_id', user.id)
+    .select()
+    .single();
 
   if (error) return res.status(500).json({ error: error.message });
-  res.json(data![0]);
+
+  if (!data) {
+    return res.status(404).json({ error: 'Not found or not allowed' });
+  }
+
+  res.json(data);
 };
 
-// Delete a sighting
+// DELETE (owner only) — versão segura
 export const deleteSighting = async (req: Request, res: Response) => {
+  const user = (req as any).user;
   const { id } = req.params;
 
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from('sightings')
     .delete()
-    .eq('id', id);
+    .eq('id', id)
+    .eq('user_id', user.id)
+    .select();
 
   if (error) return res.status(500).json({ error: error.message });
-  res.json({ message: 'Sighting deleted successfully' });
+
+  if (!data || data.length === 0) {
+    return res.status(404).json({ error: 'Not found or not allowed' });
+  }
+
+  res.json({ message: 'Deleted successfully' });
 };
 
-// Get statistics: total sightings, distinct species, most active user
+// STATS (apenas do utilizador logado — versão correta)
 export const getStats = async (req: Request, res: Response) => {
-  try {
-    // Fetch all sightings WITHOUT type arguments
-    const { data, error } = await supabase
-      .from('sightings')
-      .select('*');
+  const user = (req as any).user;
 
-    if (error) throw error;
+  const { data, error } = await supabase
+    .from('sightings')
+    .select('species_id')
+    .eq('user_id', user.id);
 
-    const sightings = data || [];
+  if (error) return res.status(500).json({ error: error.message });
 
-    if (sightings.length === 0) {
-      return res.json({
-        totalSightings: 0,
-        distinctSpecies: 0,
-        mostActiveUser: null,
-      });
-    }
+  const sightings = data || [];
 
-    // Cast to any[] to usar no cálculo
-    const sightingsTyped = sightings as any[];
+  const totalSightings = sightings.length;
+  const distinctSpecies = new Set(
+    sightings.map(s => s.species_id)
+  ).size;
 
-    const totalSightings = sightingsTyped.length;
-
-    const distinctSpecies = new Set(sightingsTyped.map(s => s.species)).size;
-
-    // Most active user
-    const userCounts: Record<string, number> = {};
-    sightingsTyped.forEach(s => {
-      if (s.user_id) userCounts[s.user_id] = (userCounts[s.user_id] || 0) + 1;
-    });
-
-    const mostActiveUser = Object.entries(userCounts).sort((a, b) => b[1] - a[1])[0]?.[0] ?? null;
-
-    res.json({ totalSightings, distinctSpecies, mostActiveUser });
-  } catch (err: any) {
-    console.error(err);
-    res.status(500).json({ error: err.message || 'Something went wrong' });
-  }
+  res.json({
+    totalSightings,
+    distinctSpecies
+  });
 };

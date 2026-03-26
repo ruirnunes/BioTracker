@@ -18,6 +18,7 @@ jobs:
       VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID || 'placeholder_project' }}
       SUPABASE_URL: ${{ secrets.SUPABASE_URL || 'https://placeholder.supabase.co' }}
       SUPABASE_KEY: ${{ secrets.SUPABASE_ANON_KEY || 'placeholder_key' }}
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
 
     steps:
       - uses: actions/checkout@v4
@@ -44,8 +45,8 @@ jobs:
 
       - name: Deploy to Vercel
         run: |
-          if [ -n "${VERCEL_TOKEN}" ]; then
-            vercel --prod --token $VERCEL_TOKEN --confirm
+          if [ -n "$VERCEL_TOKEN" ]; then
+            vercel --prod --token $VERCEL_TOKEN --yes
           else
             echo "Skipping deploy (no VERCEL_TOKEN)"
           fi

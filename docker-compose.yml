@@ -23,8 +23,6 @@ services:
     environment:
       SUPABASE_URL: ${SUPABASE_URL}
       SUPABASE_KEY: ${SUPABASE_KEY}
-    volumes:
-      - ./backend:/app/backend:rw
     command: npm run start
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3000"] 

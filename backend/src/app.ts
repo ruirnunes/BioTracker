@@ -2,6 +2,8 @@ import dotenv from 'dotenv';
 import express from 'express';
 import cors from 'cors';
 import sightingsRoutes from './routes/sightings.js';
+import speciesRoutes from './routes/species.js';
+import usersRoutes from './routes/user.js';
 
 dotenv.config();
 
@@ -16,6 +18,8 @@ app.use(express.json());
 
 // Routes
 app.use('/sightings', sightingsRoutes);
+app.use('/species', speciesRoutes);
+app.use('/users', usersRoutes);
 
 // Health check
 app.get('/health', (req, res) => {

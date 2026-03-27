@@ -150,26 +150,69 @@ export const deleteSighting = async (req: Request, res: Response) => {
   res.json({ message: 'Deleted successfully' });
 };
 
-// STATS (apenas do utilizador logado — versão correta)
+// STATS 
 export const getStats = async (req: Request, res: Response) => {
-  const user = (req as any).user;
-
+  // 1. Fetch all sightings from the database
   const { data, error } = await supabase
     .from('sightings')
-    .select('species_id')
-    .eq('user_id', user.id);
+    .select('user_id, species_id');
 
   if (error) return res.status(500).json({ error: error.message });
 
   const sightings = data || [];
 
+  // 2. Calculate total number of sightings
   const totalSightings = sightings.length;
+
+  // 3. Calculate number of distinct species
   const distinctSpecies = new Set(
     sightings.map(s => s.species_id)
   ).size;
 
+  // 4. Count sightings per user
+  const userCountMap: Record<string, number> = {};
+
+  for (const s of sightings) {
+    if (!userCountMap[s.user_id]) {
+      userCountMap[s.user_id] = 0;
+    }
+    userCountMap[s.user_id]++;
+  }
+
+  // 5. Determine the most active user
+  let mostActiveUserId: string | null = null;
+  let maxCount = 0;
+
+  for (const userId in userCountMap) {
+    if (userCountMap[userId] > maxCount) {
+      maxCount = userCountMap[userId];
+      mostActiveUserId = userId;
+    }
+  }
+
+  // 6. Optionally fetch user details from the users table
+  let mostActiveUser = null;
+
+  if (mostActiveUserId) {
+    const { data: userData } = await supabase
+      .from('users')
+      .select('id, name')
+      .eq('id', mostActiveUserId)
+      .single();
+
+    mostActiveUser = userData;
+  }
+
+  // 7. Return the final stats response
   res.json({
     totalSightings,
-    distinctSpecies
+    distinctSpecies,
+    mostActiveUser: mostActiveUser
+      ? {
+          id: mostActiveUser.id,
+          name: mostActiveUser.name,
+          sightingsCount: maxCount
+        }
+      : null
   });
 };

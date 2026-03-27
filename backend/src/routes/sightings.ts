@@ -12,6 +12,8 @@ import { auth } from '../middleware/auth.js';
 
 const router = express.Router();
 
+router.use(auth)
+
 // Public routes
 router.get('/', getSightings);
 router.get('/stats', getStats);

@@ -1,0 +1,38 @@
+<div class="stats-container">
+
+  <h2>Dashboard Overview</h2>
+
+  @if (loading) {
+    <div class="loading">
+      Loading statistics...
+    </div>
+  }
+
+  @if (error) {
+    <div class="error">
+      {{ error }}
+    </div>
+  }
+
+  @if (stats && !loading) {
+    <div class="stats-grid">
+
+      <div class="card">
+        <h3>Total Sightings</h3>
+        <p>{{ stats.totalSightings }}</p>
+      </div>
+
+      <div class="card">
+        <h3>Total Species</h3>
+        <p>{{ stats.totalSpecies }}</p>
+      </div>
+
+      <div class="card">
+        <h3>Recent Sightings</h3>
+        <p>{{ stats.recentSightings }}</p>
+      </div>
+
+    </div>
+  }
+
+</div>

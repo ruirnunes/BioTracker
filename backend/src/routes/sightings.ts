@@ -20,7 +20,7 @@ router.get('/stats', getStats);
 router.get('/:id', getSightingById);
 
 // Protected routes
-router.post('/', auth, createSighting);
+router.post('/', createSighting);
 router.put('/:id', auth, updateSighting);
 router.delete('/:id', auth, deleteSighting);
 

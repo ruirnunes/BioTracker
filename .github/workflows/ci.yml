@@ -18,6 +18,7 @@ jobs:
     env:
       SUPABASE_URL: ${{ secrets.SUPABASE_URL || 'https://placeholder.supabase.co' }}
       SUPABASE_KEY: ${{ secrets.SUPABASE_ANON_KEY || 'placeholder_key' }}
+      API_URL: http://localhost:3000
 
     steps:
       - name: Checkout
@@ -37,6 +38,7 @@ jobs:
           cat > src/environments/environment.ts <<EOF
           export const environment = {
             production: false,
+            apiUrl: '${API_URL}',
             supabaseUrl: '${SUPABASE_URL}',
             supabaseKey: '${SUPABASE_KEY}'
           };

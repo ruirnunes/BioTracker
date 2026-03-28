@@ -1,0 +1,55 @@
+<div class="form-container">
+  <h2>New Sighting</h2>
+
+  <form [formGroup]="form" (ngSubmit)="submit()">
+
+    <!-- Species dropdown -->
+    <label for="species">Species</label>
+
+    <select id="species" formControlName="species_id">
+      <option value="">Select a species</option>
+
+      @for (sp of speciesList; track sp.id) {
+        <option [value]="sp.id">
+          {{ sp.common_name }} ({{ sp.genus }} {{ sp.species }})
+        </option>
+      }
+    </select>
+
+    @if (f.species_id.touched && f.species_id.invalid) {
+      <p class="error">Species is required.</p>
+    }
+
+    <!-- Location -->
+    <label for="location">Location</label>
+    <input id="location" type="text" formControlName="location" />
+
+    @if (f.location.touched && f.location.invalid) {
+      <p class="error">
+        Location must be between 3 and 120 characters.
+      </p>
+    }
+
+    <!-- Date -->
+    <label for="date">Date</label>
+    <input id="date" type="date" formControlName="date" />
+
+    @if (f.date.touched && f.date.invalid) {
+      <p class="error">Date is required.</p>
+    }
+
+    <!-- Image URL -->
+    <label for="image_url">Image URL (optional)</label>
+    <input id="image_url" type="text" formControlName="image_url" />
+
+    <!-- Submit -->
+    <button type="submit" [disabled]="loading">
+      {{ loading ? 'Creating...' : 'Create Sighting' }}
+    </button>
+
+    @if (error) {
+      <p class="error">{{ error }}</p>
+    }
+
+  </form>
+</div>

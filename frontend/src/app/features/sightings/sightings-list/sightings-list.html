@@ -1,0 +1,30 @@
+<div class="list-container">
+  <h2>My Sightings</h2>
+
+  @if (loading) {
+    <p>Loading sightings...</p>
+  }
+
+  @if (error) {
+    <p class="error">{{ error }}</p>
+  }
+
+  @if (!loading && !error && sightings.length === 0) {
+    <p>No sightings found.</p>
+  }
+
+  <div class="list">
+    @for (sighting of sightings; track sighting.id) {
+      <a
+        class="card"
+        [routerLink]="['/sightings', sighting.id]"
+      >
+        <!-- ✅ FIX -->
+        <h3>{{ sighting.species?.common_name }}</h3>
+
+        <p><strong>Location:</strong> {{ sighting.location }}</p>
+        <p><strong>Date:</strong> {{ sighting.date | date }}</p>
+      </a>
+    }
+  </div>
+</div>

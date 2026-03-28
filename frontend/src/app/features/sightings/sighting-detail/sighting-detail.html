@@ -1,0 +1,48 @@
+<div class="detail-container">
+
+  <h2>Sighting Details</h2>
+
+  @if (loading) {
+    <div class="loading">
+      Loading sighting...
+    </div>
+  }
+
+  @if (error) {
+    <div class="error">
+      {{ error }}
+    </div>
+  }
+
+  @if (sighting && !loading) {
+    <div class="card">
+
+      <!-- ✅ FIX -->
+      <h3>{{ sighting.species?.common_name }}</h3>
+
+      <p>
+        <strong>Scientific name:</strong>
+        {{ sighting.species?.genus }} {{ sighting.species?.species }}
+      </p>
+
+      <p>
+        <strong>Type:</strong>
+        {{ sighting.species?.type }}
+      </p>
+
+      <p><strong>Location:</strong> {{ sighting.location }}</p>
+
+      <p><strong>Date:</strong> {{ sighting.date | date }}</p>
+
+      @if (sighting.image_url) {
+        <img
+          [src]="sighting.image_url"
+          alt="Sighting image"
+          class="image"
+        />
+      }
+
+    </div>
+  }
+
+</div>

@@ -3,21 +3,14 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 
 import { ApiService } from '../../../core/services/api';
+import { Sighting } from '../../../shared/models/sighting.model';
 
-interface Sighting {
-  id: string;
-  species: string;
-  location: string;
-  description: string;
-  date: string;
-}
 @Component({
   selector: 'app-sighting-detail',
   imports: [CommonModule],
   templateUrl: './sighting-detail.html',
   styleUrl: './sighting-detail.css',
 })
-
 export class SightingDetailComponent implements OnInit {
   private api = inject(ApiService);
   private route = inject(ActivatedRoute);

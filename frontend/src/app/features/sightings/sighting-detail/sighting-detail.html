@@ -17,14 +17,30 @@
   @if (sighting && !loading) {
     <div class="card">
 
-      <h3>{{ sighting.species }}</h3>
+      <!-- ✅ FIX -->
+      <h3>{{ sighting.species?.common_name }}</h3>
+
+      <p>
+        <strong>Scientific name:</strong>
+        {{ sighting.species?.genus }} {{ sighting.species?.species }}
+      </p>
+
+      <p>
+        <strong>Type:</strong>
+        {{ sighting.species?.type }}
+      </p>
 
       <p><strong>Location:</strong> {{ sighting.location }}</p>
 
-      <p><strong>Date:</strong> {{ sighting.date }}</p>
+      <p><strong>Date:</strong> {{ sighting.date | date }}</p>
 
-      <p><strong>Description:</strong></p>
-      <p>{{ sighting.description }}</p>
+      @if (sighting.image_url) {
+        <img
+          [src]="sighting.image_url"
+          alt="Sighting image"
+          class="image"
+        />
+      }
 
     </div>
   }

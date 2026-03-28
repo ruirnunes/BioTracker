@@ -1,9 +1,10 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { ApiService } from '../../../core/services/api';
+import { Species } from '../../../shared/models/species.model';
 
 @Component({
   selector: 'app-sighting-form',
@@ -11,48 +12,39 @@ import { ApiService } from '../../../core/services/api';
   templateUrl: './sighting-form.html',
   styleUrl: './sighting-form.css',
 })
-
-export class SightingFormComponent {
+export class SightingFormComponent implements OnInit {
   private fb = inject(FormBuilder);
   private api = inject(ApiService);
   private router = inject(Router);
 
+  speciesList: Species[] = [];
+
+  loading = false;
   error = '';
   submitted = false;
 
   form = this.fb.group({
-    species: [
-      '',
-      [
-        Validators.required,
-        Validators.minLength(2),
-        Validators.maxLength(80),
-        Validators.pattern(/^(?!\d+$).+/), // not only numbers
-      ],
-    ],
+    species_id: ['', Validators.required],
     location: [
       '',
-      [
-        Validators.required,
-        Validators.minLength(3),
-        Validators.maxLength(120),
-      ],
+      [Validators.required, Validators.minLength(3), Validators.maxLength(120)]
     ],
-    date: [
-      '',
-      [
-        Validators.required,
-      ],
-    ],
-    description: [
-      '',
-      [
-        Validators.maxLength(300),
-      ],
-    ],
+    date: ['', Validators.required],
+    image_url: ['']
   });
 
-  submit() {
+  ngOnInit(): void {
+    this.loadSpecies();
+  }
+
+  loadSpecies(): void {
+    this.api.get<Species[]>('/species').subscribe({
+      next: (data) => (this.speciesList = data),
+      error: () => (this.error = 'Failed to load species'),
+    });
+  }
+
+  submit(): void {
     this.submitted = true;
     this.error = '';
 
@@ -64,7 +56,7 @@ export class SightingFormComponent {
 
     const value = this.form.value;
 
-    // Date validation (no future sightings)
+    // Prevent future dates
     const selectedDate = new Date(value.date!);
     const today = new Date();
 
@@ -73,9 +65,15 @@ export class SightingFormComponent {
       return;
     }
 
+    this.loading = true;
+
     this.api.post('/sightings', value).subscribe({
-      next: () => this.router.navigate(['/sightings']),
+      next: () => {
+        this.loading = false;
+        this.router.navigate(['/sightings']);
+      },
       error: (err) => {
+        this.loading = false;
         this.error = err.error?.message ?? 'Failed to create sighting';
       },
     });

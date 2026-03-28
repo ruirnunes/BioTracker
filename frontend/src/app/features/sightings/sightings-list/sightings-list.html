@@ -19,7 +19,9 @@
         class="card"
         [routerLink]="['/sightings', sighting.id]"
       >
-        <h3>{{ sighting.species }}</h3>
+        <!-- ✅ FIX -->
+        <h3>{{ sighting.species?.common_name }}</h3>
+
         <p><strong>Location:</strong> {{ sighting.location }}</p>
         <p><strong>Date:</strong> {{ sighting.date | date }}</p>
       </a>

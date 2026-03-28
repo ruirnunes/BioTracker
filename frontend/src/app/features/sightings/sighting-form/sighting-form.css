@@ -20,6 +20,14 @@ input, textarea {
   border-radius: 4px;
 }
 
+select {
+  width: 100%;
+  padding: 8px;
+  margin-top: 4px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
 button {
   margin-top: 16px;
   width: 100%;

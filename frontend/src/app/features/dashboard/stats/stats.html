@@ -23,13 +23,21 @@
       </div>
 
       <div class="card">
-        <h3>Total Species</h3>
-        <p>{{ stats.totalSpecies }}</p>
+        <h3>Distinct Species</h3>
+        <p>{{ stats.distinctSpecies }}</p>
       </div>
 
       <div class="card">
-        <h3>Recent Sightings</h3>
-        <p>{{ stats.recentSightings }}</p>
+        <h3>Most Active User</h3>
+
+        @if (stats.mostActiveUser) {
+          <p>{{ stats.mostActiveUser.name }}</p>
+          <small>
+            {{ stats.mostActiveUser.sightingsCount }} sightings
+          </small>
+        } @else {
+          <p>No data</p>
+        }
       </div>
 
     </div>

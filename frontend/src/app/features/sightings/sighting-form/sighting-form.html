@@ -3,25 +3,21 @@
 
   <form [formGroup]="form" (ngSubmit)="submit()">
 
-    <!-- Species -->
+    <!-- Species dropdown -->
     <label for="species">Species</label>
-    <input id="species" type="text" formControlName="species" />
 
-    @if (f.species.touched && f.species.invalid) {
-      <p class="error">
-        @if (f.species.errors?.['required']) {
-          Species is required.
-        }
-        @if (f.species.errors?.['minlength']) {
-          Minimum 2 characters.
-        }
-        @if (f.species.errors?.['maxlength']) {
-          Maximum 80 characters.
-        }
-        @if (f.species.errors?.['pattern']) {
-          Species cannot be only numbers.
-        }
-      </p>
+    <select id="species" formControlName="species_id">
+      <option value="">Select a species</option>
+
+      @for (sp of speciesList; track sp.id) {
+        <option [value]="sp.id">
+          {{ sp.common_name }} ({{ sp.genus }} {{ sp.species }})
+        </option>
+      }
+    </select>
+
+    @if (f.species_id.touched && f.species_id.invalid) {
+      <p class="error">Species is required.</p>
     }
 
     <!-- Location -->
@@ -30,7 +26,7 @@
 
     @if (f.location.touched && f.location.invalid) {
       <p class="error">
-        Location must be 3–120 characters.
+        Location must be between 3 and 120 characters.
       </p>
     }
 
@@ -42,19 +38,13 @@
       <p class="error">Date is required.</p>
     }
 
-    <!-- Description -->
-    <label for="description">Description (optional)</label>
-    <textarea id="description" formControlName="description"></textarea>
-
-    @if (f.description.touched && f.description.invalid) {
-      <p class="error">
-        Maximum 300 characters.
-      </p>
-    }
+    <!-- Image URL -->
+    <label for="image_url">Image URL (optional)</label>
+    <input id="image_url" type="text" formControlName="image_url" />
 
     <!-- Submit -->
-    <button type="submit">
-      Create Sighting
+    <button type="submit" [disabled]="loading">
+      {{ loading ? 'Creating...' : 'Create Sighting' }}
     </button>
 
     @if (error) {

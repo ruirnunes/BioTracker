@@ -38,6 +38,27 @@ a.card:focus-visible {
   color: #2d6cdf;
 }
 
+.search-box {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.search-box input {
+  flex: 1;
+}
+
+.filters {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.filters input,
+.filters select {
+  flex: 1;
+}
+
 .scientific {
   font-style: italic;
   color: #7f8c8d;

@@ -5,8 +5,12 @@ import { ApiService } from '../../../core/services/api';
 
 interface Stats {
   totalSightings: number;
-  totalSpecies: number;
-  recentSightings: number;
+  distinctSpecies: number;
+  mostActiveUser: {
+    id: string;
+    name: string;
+    sightingsCount: number;
+  } | null;
 }
 
 @Component({
@@ -15,7 +19,6 @@ interface Stats {
   templateUrl: './stats.html',
   styleUrl: './stats.css',
 })
-
 export class StatsComponent implements OnInit {
   private api = inject(ApiService);
 
@@ -29,8 +32,10 @@ export class StatsComponent implements OnInit {
 
   loadStats(): void {
     this.loading = true;
+    this.error = '';
 
-    this.api.get<Stats>('/stats').subscribe({
+    // ✅ FIXED ENDPOINT
+    this.api.get<Stats>('/sightings/stats').subscribe({
       next: (data) => {
         this.stats = data;
         this.loading = false;

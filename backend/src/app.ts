@@ -4,6 +4,7 @@ import cors from 'cors';
 import sightingsRoutes from './routes/sightings.js';
 import speciesRoutes from './routes/species.js';
 import usersRoutes from './routes/user.js';
+import authRoutes from './routes/auth.js';
 
 dotenv.config();
 
@@ -17,6 +18,7 @@ app.use(cors({
 app.use(express.json());
 
 // Routes
+app.use('/auth', authRoutes);
 app.use('/sightings', sightingsRoutes);
 app.use('/species', speciesRoutes);
 app.use('/users', usersRoutes);

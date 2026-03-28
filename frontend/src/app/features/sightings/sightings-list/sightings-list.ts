@@ -1,26 +1,18 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterModule } from '@angular/router';
+import { RouterModule } from '@angular/router';
 
 import { ApiService } from '../../../core/services/api';
-
-export interface Sighting {
-  id: string;
-  species: string;
-  location: string;
-  date: string;
-}
+import { Sighting } from '../../../shared/models/sighting.model';
 
 @Component({
   selector: 'app-sightings-list',
-  imports: [CommonModule,RouterModule ],
+  imports: [CommonModule, RouterModule],
   templateUrl: './sightings-list.html',
   styleUrl: './sightings-list.css',
 })
-
 export class SightingListComponent implements OnInit {
   private api = inject(ApiService);
-  private router = inject(Router);
 
   sightings: Sighting[] = [];
   loading = true;
@@ -44,9 +36,5 @@ export class SightingListComponent implements OnInit {
         this.loading = false;
       },
     });
-  }
-
-  openDetail(id: string): void {
-    this.router.navigate(['/sightings', id]);
   }
 }

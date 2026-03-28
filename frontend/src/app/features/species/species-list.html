@@ -1,6 +1,27 @@
 <div class="list-container">
   <h2>Species</h2>
 
+  <!-- 🔍 SEARCH + FILTER -->
+  <div class="filters">
+
+    <input
+      type="text"
+      [(ngModel)]="searchTerm"
+      placeholder="Search species..."
+    />
+
+    <select [(ngModel)]="selectedType">
+      <option value="">All types</option>
+      <option value="animal">Animal</option>
+      <option value="plant">Plant</option>
+      <option value="fungus">Fungus</option>
+    </select>
+
+    <button (click)="applyFilters()">Apply</button>
+    <button (click)="clearFilters()">Reset</button>
+
+  </div>
+
   @if (loading) {
     <p>Loading species...</p>
   }

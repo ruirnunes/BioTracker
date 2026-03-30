@@ -1,10 +1,11 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 
 import { ApiService } from '../../../core/services/api';
 import { Species } from '../../../shared/models/species.model';
+import { Sighting } from '../../../shared/models/sighting.model';
 
 @Component({
   selector: 'app-sighting-form',
@@ -16,12 +17,17 @@ export class SightingFormComponent implements OnInit {
   private fb = inject(FormBuilder);
   private api = inject(ApiService);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
   speciesList: Species[] = [];
 
   loading = false;
   error = '';
   submitted = false;
+
+  // 🔥 EDIT MODE
+  isEdit = false;
+  id: string | null = null;
 
   form = this.fb.group({
     species_id: ['', Validators.required],
@@ -34,6 +40,13 @@ export class SightingFormComponent implements OnInit {
   });
 
   ngOnInit(): void {
+    this.id = this.route.snapshot.paramMap.get('id');
+
+    if (this.id) {
+      this.isEdit = true;
+      this.loadSighting(this.id);
+    }
+
     this.loadSpecies();
   }
 
@@ -41,6 +54,22 @@ export class SightingFormComponent implements OnInit {
     this.api.get<Species[]>('/species').subscribe({
       next: (data) => (this.speciesList = data),
       error: () => (this.error = 'Failed to load species'),
+    });
+  }
+
+  loadSighting(id: string): void {
+    this.api.get<Sighting>(`/sightings/${id}`).subscribe({
+      next: (data) => {
+        this.form.patchValue({
+          species_id: data.species_id,
+          location: data.location,
+          date: data.date,
+          image_url: data.image_url
+        });
+      },
+      error: () => {
+        this.error = 'Failed to load sighting';
+      }
     });
   }
 
@@ -67,14 +96,18 @@ export class SightingFormComponent implements OnInit {
 
     this.loading = true;
 
-    this.api.post('/sightings', value).subscribe({
+    const request = this.isEdit
+      ? this.api.put(`/sightings/${this.id}`, value)
+      : this.api.post('/sightings', value);
+
+    request.subscribe({
       next: () => {
         this.loading = false;
         this.router.navigate(['/sightings']);
       },
       error: (err) => {
         this.loading = false;
-        this.error = err.error?.message ?? 'Failed to create sighting';
+        this.error = err.error?.message ?? 'Operation failed';
       },
     });
   }

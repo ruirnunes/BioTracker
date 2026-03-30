@@ -1,11 +1,12 @@
 <div class="form-container">
-  <h2>New Sighting</h2>
+  <h2>
+    {{ isEdit ? 'Edit Sighting' : 'New Sighting' }}
+  </h2>
 
   <form [formGroup]="form" (ngSubmit)="submit()">
 
-    <!-- Species dropdown -->
+    <!-- Species -->
     <label for="species">Species</label>
-
     <select id="species" formControlName="species_id">
       <option value="">Select a species</option>
 
@@ -38,13 +39,15 @@
       <p class="error">Date is required.</p>
     }
 
-    <!-- Image URL -->
+    <!-- Image -->
     <label for="image_url">Image URL (optional)</label>
     <input id="image_url" type="text" formControlName="image_url" />
 
     <!-- Submit -->
     <button type="submit" [disabled]="loading">
-      {{ loading ? 'Creating...' : 'Create Sighting' }}
+      {{ loading 
+        ? (isEdit ? 'Updating...' : 'Creating...') 
+        : (isEdit ? 'Update Sighting' : 'Create Sighting') }}
     </button>
 
     @if (error) {

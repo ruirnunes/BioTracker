@@ -27,6 +27,16 @@
         <p>{{ stats.distinctSpecies }}</p>
       </div>
 
+      <div>
+        <h3>Species by type</h3>
+
+        @for (type of objectKeys(stats.sightingsPerType); track type) {
+          <p>
+            {{ type }}: {{ stats.sightingsPerType[type] }}
+          </p>
+        }
+      </div>
+
       <div class="card">
         <h3>Most Active User</h3>
 
@@ -35,8 +45,6 @@
           <small>
             {{ stats.mostActiveUser.sightingsCount }} sightings
           </small>
-        } @else {
-          <p>No data</p>
         }
       </div>
 

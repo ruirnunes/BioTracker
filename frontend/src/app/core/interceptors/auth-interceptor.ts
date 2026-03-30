@@ -6,14 +6,22 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const auth = inject(AuthService);
   const token = auth.getToken();
 
-  const excludedUrls = ['/auth/login', '/auth/register'];
+  const excludedUrls = new Set([
+    '/auth/login',
+    '/auth/register'
+  ]);
 
-  if (
+  // normalize path
+  const requestPath = new URL(req.url, 'http://dummy-base').pathname;
+
+  const isExcluded = excludedUrls.has(requestPath);
+
+  const isInvalidToken =
     !token ||
     token === 'null' ||
-    token === 'undefined' ||
-    excludedUrls.some(url => req.url.includes(url))
-  ) {
+    token === 'undefined';
+
+  if (isExcluded || isInvalidToken) {
     return next(req);
   }
 

@@ -12,7 +12,7 @@ import supabase from '../supabaseClient.js';
 
 const router = Router();
 
-// 🔍 SEARCH + FILTER
+// SEARCH + FILTER
 router.get('/search', async (req, res) => {
   const { q, type } = req.query;
 

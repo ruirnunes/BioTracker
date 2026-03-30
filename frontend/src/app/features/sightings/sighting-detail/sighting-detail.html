@@ -3,9 +3,7 @@
   <h2>Sighting Details</h2>
 
   @if (loading) {
-    <div class="loading">
-      Loading sighting...
-    </div>
+    <app-loading message="Loading sighting details..."></app-loading>
   }
 
   @if (error) {
@@ -17,7 +15,6 @@
   @if (sighting && !loading) {
     <div class="card">
 
-      <!-- ✅ FIX -->
       <h3>{{ sighting.species?.common_name }}</h3>
 
       <p>
@@ -37,10 +34,18 @@
       @if (sighting.image_url) {
         <img
           [src]="sighting.image_url"
-          alt="Sighting image"
+          alt="Photo of {{ sighting.species?.common_name }}"
           class="image"
         />
       }
+
+      <a [routerLink]="['/sightings/edit', sighting.id]">
+        <button>Edit</button>
+      </a>
+
+      <button (click)="delete()" class="delete-btn">
+        Delete
+      </button>
 
     </div>
   }

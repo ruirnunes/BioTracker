@@ -12,16 +12,25 @@ import { auth } from '../middleware/auth.js';
 
 const router = express.Router();
 
-router.use(auth)
+// Apply auth to all routes
+router.use(auth);
 
-// Public routes
+// GET all sightings (only logged user)
 router.get('/', getSightings);
+
+// GET stats
 router.get('/stats', getStats);
+
+// GET one sighting
 router.get('/:id', getSightingById);
 
-// Protected routes
+// CREATE
 router.post('/', createSighting);
-router.put('/:id', auth, updateSighting);
-router.delete('/:id', auth, deleteSighting);
+
+// UPDATE (no need for auth again)
+router.put('/:id', updateSighting);
+
+// DELETE (no need for auth again)
+router.delete('/:id', deleteSighting);
 
 export default router;

@@ -1,16 +1,23 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
 import { ApiService } from '../../../core/services/api';
 
 interface Stats {
   totalSightings: number;
   distinctSpecies: number;
+  sightingsPerType: Record<string, number>;
+
   mostActiveUser: {
     id: string;
     name: string;
     sightingsCount: number;
   } | null;
+
+  latestSightings: {
+    id: string;
+    species_id: string;
+    created_at: string;
+  }[];
 }
 
 @Component({
@@ -26,6 +33,8 @@ export class StatsComponent implements OnInit {
   loading = true;
   error = '';
 
+  objectKeys = Object.keys;
+
   ngOnInit(): void {
     this.loadStats();
   }
@@ -34,8 +43,7 @@ export class StatsComponent implements OnInit {
     this.loading = true;
     this.error = '';
 
-    // ✅ FIXED ENDPOINT
-    this.api.get<Stats>('/sightings/stats').subscribe({
+    this.api.get<Stats>('/users/me/stats').subscribe({
       next: (data) => {
         this.stats = data;
         this.loading = false;

@@ -4,10 +4,11 @@ import { RouterModule } from '@angular/router';
 
 import { ApiService } from '../../../core/services/api';
 import { Sighting } from '../../../shared/models/sighting.model';
+import { LoadingComponent } from '../../../shared/components/loading/loading';
 
 @Component({
   selector: 'app-sightings-list',
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, LoadingComponent],
   templateUrl: './sightings-list.html',
   styleUrl: './sightings-list.css',
 })

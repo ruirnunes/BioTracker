@@ -31,7 +31,7 @@ export class AuthComponent {
 
   submit() {
     if (!this.email || !this.password) {
-      this.error = 'Preenche todos os campos';
+      this.error = 'Please fill in all fields';
       return;
     }
 
@@ -49,7 +49,7 @@ export class AuthComponent {
       },
       error: (err) => {
         this.loading = false;
-        this.error = err?.error?.message || 'Erro de autenticação';
+        this.error = err?.error?.message || 'Authentication error';
       }
     });
   }

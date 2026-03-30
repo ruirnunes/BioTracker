@@ -34,6 +34,12 @@ export const routes: Routes = [
             .then((m) => m.SightingFormComponent),
       },
       {
+      path: 'edit/:id', // 👈 ADD THIS
+      loadComponent: () =>
+        import('./features/sightings/sighting-form/sighting-form')
+          .then((m) => m.SightingFormComponent),
+      },
+      {
         path: ':id',
         loadComponent: () =>
           import('./features/sightings/sighting-detail/sighting-detail')
@@ -49,6 +55,13 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./features/species/species-list')
         .then((m) => m.SpeciesListComponent),
+  },
+
+  {
+    path: 'species/:id',
+    loadComponent: () =>
+      import('./features/species/species-detail/species-detail')
+        .then(m => m.SpeciesDetailComponent)
   },
 
   // Dashboard (protected)

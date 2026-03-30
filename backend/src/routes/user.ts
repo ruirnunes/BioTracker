@@ -9,16 +9,24 @@ import {
 
 const router = Router();
 
-// All routes require authentication
+/**
+ * All routes below require authentication
+ */
 router.use(auth);
 
-// Get current user profile
+/**
+ * Get current authenticated user profile
+ */
 router.get('/me', getMe);
 
-// Update current user profile
+/**
+ * Update current authenticated user profile
+ */
 router.put('/me', updateMe);
 
-// Get user stats (sightings count)
+/**
+ * Get statistics for current user (sightings, species, etc.)
+ */
 router.get('/me/stats', getUserStats);
 
 export default router;

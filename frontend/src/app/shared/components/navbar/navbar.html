@@ -6,17 +6,13 @@
   <div class="nav-right">
 
     @if (isLoggedIn()) {
-
       <a routerLink="/sightings">Sightings</a>
       <a routerLink="/species">Species</a>
       <a routerLink="/dashboard">Dashboard</a>
 
       <button (click)="logout()">Logout</button>
-
     } @else {
-
       <a routerLink="/auth">Login</a>
-
     }
 
   </div>

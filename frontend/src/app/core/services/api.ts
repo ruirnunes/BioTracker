@@ -9,23 +9,55 @@ export class ApiService {
 
   private baseUrl = environment.apiUrl;
 
+  /**
+   * Ensures consistent URL formatting:
+   * - avoids double slashes
+   * - ensures baseUrl is always prepended
+   */
   private normalizeUrl(url: string): string {
     return `${this.baseUrl}${url.startsWith('/') ? url : '/' + url}`;
   }
 
+  /**
+   * GET request
+   */
   get<T>(url: string): Observable<T> {
-    return this.http.get<T>(this.normalizeUrl(url));
+    const fullUrl = this.normalizeUrl(url);
+    console.log('API GET →', fullUrl);
+
+    return this.http.get<T>(fullUrl);
   }
 
+  /**
+   * POST request
+   */
   post<T, B>(url: string, body: B): Observable<T> {
-    return this.http.post<T>(this.normalizeUrl(url), body);
+    const fullUrl = this.normalizeUrl(url);
+
+    console.log('API POST →', fullUrl, body);
+
+    return this.http.post<T>(fullUrl, body);
   }
 
+  /**
+   * PUT request
+   */
   put<T, B>(url: string, body: B): Observable<T> {
-    return this.http.put<T>(this.normalizeUrl(url), body);
+    const fullUrl = this.normalizeUrl(url);
+
+    console.log('API PUT →', fullUrl, body);
+
+    return this.http.put<T>(fullUrl, body);
   }
 
+  /**
+   * DELETE request
+   */
   delete<T>(url: string): Observable<T> {
-    return this.http.delete<T>(this.normalizeUrl(url));
+    const fullUrl = this.normalizeUrl(url);
+
+    console.log('API DELETE →', fullUrl);
+
+    return this.http.delete<T>(fullUrl);
   }
 }

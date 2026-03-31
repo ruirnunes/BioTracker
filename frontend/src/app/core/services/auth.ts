@@ -21,9 +21,12 @@ export class AuthService {
     const token = this.getToken();
     if (!token) return false;
 
+    const parts = token.split('.');
+    if (parts.length !== 3) return false;
+
     try {
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      return payload.exp * 1000 > Date.now();
+      const payload = JSON.parse(atob(parts[1]));
+      return payload?.exp ? payload.exp * 1000 > Date.now() : false;
     } catch {
       return false;
     }

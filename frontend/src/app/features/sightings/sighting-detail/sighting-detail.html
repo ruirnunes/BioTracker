@@ -2,7 +2,7 @@
 
   <h2>Sighting Details</h2>
 
-  @if (loading) {
+  @if (loading()) {
     <app-loading message="Loading sighting details..."></app-loading>
   }
 
@@ -12,7 +12,7 @@
     </div>
   }
 
-  @if (sighting && !loading) {
+  @if (sighting && !loading()) {
     <div class="card">
 
       <h3>{{ sighting.species?.common_name }}</h3>

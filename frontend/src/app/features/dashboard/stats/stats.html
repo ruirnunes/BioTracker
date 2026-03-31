@@ -2,7 +2,7 @@
 
   <h2>Dashboard Overview</h2>
 
-  @if (loading) {
+  @if (loading()) {
     <div class="loading">
       Loading statistics...
     </div>
@@ -14,7 +14,7 @@
     </div>
   }
 
-  @if (stats && !loading) {
+  @if (stats && !loading()) {
     <div class="stats-grid">
 
       <div class="card">

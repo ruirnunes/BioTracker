@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ApiService } from '../../../core/services/api';
 
@@ -30,7 +30,7 @@ export class StatsComponent implements OnInit {
   private api = inject(ApiService);
 
   stats: Stats | null = null;
-  loading = true;
+  loading = signal(true);
   error = '';
 
   objectKeys = Object.keys;
@@ -40,17 +40,17 @@ export class StatsComponent implements OnInit {
   }
 
   loadStats(): void {
-    this.loading = true;
+    this.loading.set(true);
     this.error = '';
 
     this.api.get<Stats>('/users/me/stats').subscribe({
       next: (data) => {
         this.stats = data;
-        this.loading = false;
+        this.loading.set(false);
       },
       error: () => {
         this.error = 'Failed to load stats';
-        this.loading = false;
+        this.loading.set(false);
       },
     });
   }

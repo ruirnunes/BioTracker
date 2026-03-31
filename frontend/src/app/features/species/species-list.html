@@ -22,15 +22,15 @@
 
   </div>
 
-  @if (loading) {
+  @if (loading()) {
     <p>Loading species...</p>
   }
 
-  @if (error) {
-    <p class="error">{{ error }}</p>
+  @if (error()) {
+    <p class="error">{{ error() }}</p>
   }
 
-  @if (!loading && !error && species.length === 0) {
+  @if (!loading() && !error() && species.length === 0) {
     <p>No species found.</p>
   }
 

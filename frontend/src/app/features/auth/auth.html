@@ -23,13 +23,13 @@
         required
       />
 
-      <button type="submit" [disabled]="loading">
-        {{ loading ? 'Processing...' : (isLogin ? 'Login' : 'Create account') }}
+      <button type="submit" [disabled]="loading()">
+        {{ loading() ? 'Processing...' : (isLogin ? 'Login' : 'Create account') }}
       </button>
 
-      @if (error) {
+      @if (error()) {
         <p class="error">
-          {{ error }}
+          {{ error() }}
         </p>
       }
     </form>

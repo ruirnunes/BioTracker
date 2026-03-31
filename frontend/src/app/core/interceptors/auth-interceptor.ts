@@ -6,30 +6,21 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const auth = inject(AuthService);
   const token = auth.getToken();
 
-  const excludedUrls = new Set([
-    '/auth/login',
-    '/auth/register'
-  ]);
+  const url = req.url.toLowerCase();
 
-  // normalize path
-  const requestPath = new URL(req.url, 'http://dummy-base').pathname;
+  const isAuthRoute =
+    url.includes('/auth/login') ||
+    url.includes('/auth/register');
 
-  const isExcluded = excludedUrls.has(requestPath);
-
-  const isInvalidToken =
-    !token ||
-    token === 'null' ||
-    token === 'undefined';
-
-  if (isExcluded || isInvalidToken) {
+  if (isAuthRoute || !token) {
     return next(req);
   }
 
-  const authReq = req.clone({
-    setHeaders: {
-      Authorization: `Bearer ${token}`
-    }
-  });
-
-  return next(authReq);
+  return next(
+    req.clone({
+      setHeaders: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+  );
 };

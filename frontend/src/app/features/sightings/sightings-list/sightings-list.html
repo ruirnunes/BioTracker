@@ -7,15 +7,15 @@
     </a>
   </div>
 
-  @if (loading) {
+  @if (loading()) {
     <app-loading message="Loading sightings..."></app-loading>
   }
 
-  @if (error) {
-    <p class="error">{{ error }}</p>
+  @if (error()) {
+    <p class="error">{{ error() }}</p>
   }
-
-  @if (!loading && !error && sightings.length === 0) {
+  
+  @if (!loading() && !error() && sightings.length === 0) {
     <p>No sightings found.</p>
   }
 

@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -26,30 +26,30 @@ export class SpeciesListComponent implements OnInit {
   searchTerm = '';
   selectedType = '';
 
-  loading = true;
-  error = '';
+  loading = signal(true);
+  error = signal('');
 
   ngOnInit(): void {
     this.loadSpecies();
   }
 
   loadSpecies(): void {
-    this.loading = true;
+    this.loading.set(true);
 
     this.api.get<Species[]>('/species').subscribe({
       next: (data) => {
         this.species = data;
-        this.loading = false;
+        this.loading.set(false);
       },
       error: () => {
-        this.error = 'Failed to load species';
-        this.loading = false;
+        this.error.set('Failed to load species');
+        this.loading.set(false);
       },
     });
   }
 
   applyFilters(): void {
-    this.loading = true;
+    this.loading.set(true);
 
     const params = [];
 
@@ -66,11 +66,11 @@ export class SpeciesListComponent implements OnInit {
     this.api.get<Species[]>(`/species/search${queryString}`).subscribe({
       next: (data) => {
         this.species = data;
-        this.loading = false;
+        this.loading.set(false);
       },
       error: () => {
-        this.error = 'Failed to filter species';
-        this.loading = false;
+        this.error.set('Failed to filter species')
+        this.loading.set(false);
       },
     });
   }

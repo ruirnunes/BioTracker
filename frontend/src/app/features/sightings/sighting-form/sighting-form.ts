@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -19,13 +19,13 @@ export class SightingFormComponent implements OnInit {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
 
-  speciesList: Species[] = [];
+  speciesList = signal<Species[]>([]);
 
   loading = false;
   error = '';
   submitted = false;
 
-  // 🔥 EDIT MODE
+  // EDIT MODE
   isEdit = false;
   id: string | null = null;
 
@@ -52,7 +52,7 @@ export class SightingFormComponent implements OnInit {
 
   loadSpecies(): void {
     this.api.get<Species[]>('/species').subscribe({
-      next: (data) => (this.speciesList = data),
+      next: (data) => (this.speciesList.set(data)),
       error: () => (this.error = 'Failed to load species'),
     });
   }

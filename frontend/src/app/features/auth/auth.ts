@@ -1,71 +1,65 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 
-import { ApiService } from '../../core/services/api';
+
 import { AuthService } from '../../core/services/auth';
-
-interface AuthResponse {
-  access_token: string | null;
-}
-
-interface AuthRequest {
-  email: string;
-  password: string;
-}
 
 @Component({
   selector: 'app-auth',
+  standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './auth.html',
   styleUrl: './auth.css',
 })
 export class AuthComponent {
-  private api = inject(ApiService);
-  private auth = inject(AuthService);
-  private router = inject(Router);
+  private readonly auth = inject(AuthService);
+  private readonly router = inject(Router);
 
   email = '';
   password = '';
   isLogin = true;
-  error = '';
-  loading = false;
+  error = signal('');
+  loading = signal(false);
 
-  toggleMode() {
+  toggleMode(): void {
     this.isLogin = !this.isLogin;
-    this.error = '';
+    this.error.set('');
   }
 
-  submit() {
+  submit(): void {
     if (!this.email || !this.password) {
-      this.error = 'Please fill in all fields';
+      this.error.set('Please fill in all fields');
       return;
     }
 
-    this.loading = true;
+   // this.loading = true;
+    this.error.set('');
 
-    const url = this.isLogin ? '/auth/login' : '/auth/register';
+    const request$ = this.isLogin
+      ? this.auth.login(this.email, this.password)
+      : this.auth.register('user', this.email, this.password);
 
-    this.api.post<AuthResponse, AuthRequest>(
-      url,
-      { email: this.email, password: this.password }
-    ).subscribe({
+    request$.subscribe({
       next: (res) => {
-        this.loading = false;
+        this.loading.set(false);
 
-        if (!res.access_token) {
-          this.error = 'No token received. Please try logging in.';
+        const token = res.session?.access_token;
+
+        if (!token) {
+          this.error.set('Authentication failed');
           return;
         }
 
-        this.auth.setToken(res.access_token);
-        this.router.navigate(['/']);
+        this.router.navigate(['/sightings']);
       },
-      error: (err: { error?: { message?: string } }) => {
-        this.loading = false;
-        this.error = err?.error?.message ?? 'Authentication error';
-      }
+
+      error: (err) => {
+        this.loading.set(false);
+        this.error.set(err?.error?.message ?? 'Authentication error');
+
+      },
     });
   }
 }

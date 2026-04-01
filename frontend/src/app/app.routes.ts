@@ -2,21 +2,20 @@ import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth-guard';
 
 export const routes: Routes = [
-  // Default redirect
   {
     path: '',
     pathMatch: 'full',
-    redirectTo: 'sightings',
+    redirectTo: 'dashboard',
   },
 
-  // Auth
+  // AUTH
   {
     path: 'auth',
     loadComponent: () =>
-      import('./features/auth/auth').then((m) => m.AuthComponent),
+      import('./features/auth/auth').then(m => m.AuthComponent),
   },
 
-  // Sightings (protected)
+  // SIGHTINGS
   {
     path: 'sightings',
     canActivate: [authGuard],
@@ -25,55 +24,68 @@ export const routes: Routes = [
         path: '',
         loadComponent: () =>
           import('./features/sightings/sightings-list/sightings-list')
-            .then((m) => m.SightingListComponent),
+            .then(m => m.SightingsListComponent),
       },
       {
         path: 'new',
         loadComponent: () =>
           import('./features/sightings/sighting-form/sighting-form')
-            .then((m) => m.SightingFormComponent),
+            .then(m => m.SightingFormComponent),
       },
       {
-      path: 'edit/:id', // 👈 ADD THIS
-      loadComponent: () =>
-        import('./features/sightings/sighting-form/sighting-form')
-          .then((m) => m.SightingFormComponent),
+        path: 'edit/:id',
+        loadComponent: () =>
+          import('./features/sightings/sighting-form/sighting-form')
+            .then(m => m.SightingFormComponent),
       },
       {
         path: ':id',
         loadComponent: () =>
           import('./features/sightings/sighting-detail/sighting-detail')
-            .then((m) => m.SightingDetailComponent),
+            .then(m => m.SightingDetailComponent),
       },
     ],
   },
 
-  // Species (protected)
+  // SPECIES (ORDEM CORRETA 👇)
+  {
+    path: 'species/new',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/species/species-form/species-form')
+        .then(m => m.SpeciesFormComponent),
+  },
+  {
+    path: 'species/:id/edit',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/species/species-form/species-form')
+        .then(m => m.SpeciesFormComponent),
+  },
+  {
+    path: 'species/:id',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/species/species-detail/species-detail')
+        .then(m => m.SpeciesDetailComponent),
+  },
   {
     path: 'species',
     canActivate: [authGuard],
     loadComponent: () =>
       import('./features/species/species-list')
-        .then((m) => m.SpeciesListComponent),
+        .then(m => m.SpeciesListComponent),
   },
 
-  {
-    path: 'species/:id',
-    loadComponent: () =>
-      import('./features/species/species-detail/species-detail')
-        .then(m => m.SpeciesDetailComponent)
-  },
-
-  // Dashboard (protected)
+  // DASHBOARD
   {
     path: 'dashboard',
     canActivate: [authGuard],
     loadComponent: () =>
       import('./features/dashboard/stats/stats')
-        .then((m) => m.StatsComponent),
+        .then(m => m.StatsComponent),
   },
 
-  // Fallback
   {
     path: '**',
     redirectTo: 'sightings',

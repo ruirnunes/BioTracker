@@ -1,35 +1,62 @@
-<div class="list-container">
-  <div class="header">
-    <h2>My Sightings</h2>
+<div class="sightings-page">
 
-    <a routerLink="/sightings/new">
-      <button>Create New Sighting</button>
-    </a>
+  <!-- CONTROLS -->
+  <div class="sightings-controls">
+
+    <button type="button" (click)="toggleMySightings()">
+      {{ showMineOnly() ? 'Show all sightings' : 'My sightings' }}
+    </button>
+
+    <input
+      type="text"
+      placeholder="Search by species or location..."
+      (input)="onSearch($event)"
+    />
+
+    <button type="button" (click)="toggleSort()">
+      Sort by date: {{ sortDesc() ? 'Newest' : 'Oldest' }}
+    </button>
+
+    <!-- 👇 ESTE É O NOVO BOTÃO -->
+    <button
+      type="button"
+      class="add-btn"
+      [routerLink]="['/sightings/new']"
+    >
+      + Add sighting
+    </button>
+
   </div>
 
-  @if (loading) {
-    <app-loading message="Loading sightings..."></app-loading>
-  }
+  <!-- LIST -->
+  <div class="sightings-list">
 
-  @if (error) {
-    <p class="error">{{ error }}</p>
-  }
+    @for (sighting of filteredSightings(); track sighting.id) {
 
-  @if (!loading && !error && sightings.length === 0) {
-    <p>No sightings found.</p>
-  }
+      <div class="sighting-card">
 
-  <div class="list">
-    @for (sighting of sightings; track sighting.id) {
-      <a class="card" [routerLink]="['/sightings', sighting.id]">
-
-        <h3>{{ sighting.species?.common_name }}</h3>
+        <h3>{{ sighting.species?.common_name || 'Unknown species' }}</h3>
 
         <p><strong>Location:</strong> {{ sighting.location }}</p>
 
-        <p><strong>Date:</strong> {{ sighting.date | date }}</p>
+        <p>
+          <strong>Date:</strong>
+          {{ sighting.date | date }}
+        </p>
 
-      </a>
+        <p>
+          <strong>Observed by:</strong>
+          {{ sighting.users?.name || 'Unknown user' }}
+        </p>
+
+        <a [routerLink]="['/sightings', sighting.id]">
+          View details
+        </a>
+
+      </div>
+
     }
+
   </div>
+
 </div>

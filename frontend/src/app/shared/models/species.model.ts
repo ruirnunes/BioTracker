@@ -7,3 +7,12 @@ export interface Species {
   species: string;
   type: SpeciesType;
 }
+
+export type CreateSpeciesDto = {
+  common_name: string;
+  genus: string;
+  species: string;
+  type: SpeciesType;
+};
+
+export type UpdateSpeciesDto = Partial<CreateSpeciesDto>;

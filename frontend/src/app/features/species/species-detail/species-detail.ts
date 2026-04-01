@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ApiService } from '../../../core/services/api';
@@ -15,7 +15,7 @@ export class SpeciesDetailComponent implements OnInit {
   private api = inject(ApiService);
 
   species: Species | null = null;
-  loading = true;
+  loading = signal(true);
   error = '';
 
   ngOnInit(): void {
@@ -23,18 +23,18 @@ export class SpeciesDetailComponent implements OnInit {
 
     if (!id) {
       this.error = 'Invalid species ID';
-      this.loading = false;
+      this.loading.set(false);
       return;
     }
 
     this.api.get<Species>(`/species/${id}`).subscribe({
       next: (data) => {
         this.species = data;
-        this.loading = false;
+        this.loading.set(false);
       },
       error: () => {
         this.error = 'Failed to load species';
-        this.loading = false;
+        this.loading.set(false);
       }
     });
   }

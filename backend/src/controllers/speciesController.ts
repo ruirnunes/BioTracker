@@ -1,27 +1,31 @@
 import type { Request, Response } from 'express';
 import supabase from '../supabaseClient.js';
 
+type SpeciesType = 'animal' | 'plant' | 'fungus';
+
 interface Species {
   id?: string;
   common_name: string;
   genus: string;
   species: string;
-  type: 'animal' | 'plant' | 'fungus';
+  type: SpeciesType;
 }
 
-// GET all species (público ou autenticado)
-export const getSpecies = async (req: Request, res: Response) => {
+// GET all species
+export const getSpecies = async (_req: Request, res: Response) => {
   const { data, error } = await supabase
     .from('species')
     .select('*')
     .order('common_name', { ascending: true });
 
-  if (error) return res.status(500).json({ error: error.message });
+  if (error) {
+    return res.status(500).json({ error: error.message });
+  }
 
-  res.json(data);
+  return res.json(data);
 };
 
-// GET single species
+// GET by id
 export const getSpeciesById = async (req: Request, res: Response) => {
   const { id } = req.params;
 
@@ -35,14 +39,17 @@ export const getSpeciesById = async (req: Request, res: Response) => {
     return res.status(404).json({ error: 'Species not found' });
   }
 
-  res.json(data);
+  return res.json(data);
 };
 
-// CREATE species (opcional: só admin/autenticado)
+// CREATE
 export const createSpecies = async (req: Request, res: Response) => {
-  const user = (req as any).user;
-
-  const { common_name, genus, species, type } = req.body as Species;
+  const { common_name, genus, species, type } = req.body as {
+    common_name: string;
+    genus: string;
+    species: string;
+    type: SpeciesType;
+  };
 
   if (!common_name || !genus || !species || !type) {
     return res.status(400).json({ error: 'Missing required fields' });
@@ -55,42 +62,56 @@ export const createSpecies = async (req: Request, res: Response) => {
         common_name,
         genus,
         species,
-        type
-      }
+        type,
+      },
     ])
     .select()
     .single();
 
-  if (error) return res.status(500).json({ error: error.message });
+  if (error) {
+    return res.status(500).json({ error: error.message });
+  }
 
-  res.status(201).json(data);
+  return res.status(201).json(data);
 };
 
-// UPDATE species
+// UPDATE
 export const updateSpecies = async (req: Request, res: Response) => {
   const { id } = req.params;
 
-  const { common_name, genus, species, type } = req.body as Species;
+  const body = req.body as Partial<{
+    common_name: string;
+    genus: string;
+    species: string;
+    type: SpeciesType;
+  }>;
+
+  const updates: Partial<Species> = {};
+
+  if (body.common_name !== undefined) updates.common_name = body.common_name;
+  if (body.genus !== undefined) updates.genus = body.genus;
+  if (body.species !== undefined) updates.species = body.species;
+  if (body.type !== undefined) updates.type = body.type;
 
   const { data, error } = await supabase
     .from('species')
-    .update({
-      common_name,
-      genus,
-      species,
-      type
-    })
+    .update(updates)
     .eq('id', id)
     .select()
-    .single();
+    .maybeSingle();
 
-  if (error) return res.status(500).json({ error: error.message });
-  if (!data) return res.status(404).json({ error: 'Species not found' });
+  if (error) {
+    return res.status(500).json({ error: error.message });
+  }
 
-  res.json(data);
+  if (!data) {
+    return res.status(404).json({ error: 'Species not found' });
+  }
+
+  return res.json(data);
 };
 
-// DELETE species
+// DELETE
 export const deleteSpecies = async (req: Request, res: Response) => {
   const { id } = req.params;
 
@@ -99,7 +120,9 @@ export const deleteSpecies = async (req: Request, res: Response) => {
     .delete()
     .eq('id', id);
 
-  if (error) return res.status(500).json({ error: error.message });
+  if (error) {
+    return res.status(500).json({ error: error.message });
+  }
 
-  res.json({ message: 'Species deleted successfully' });
+  return res.json({ message: 'Species deleted successfully' });
 };

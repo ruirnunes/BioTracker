@@ -1,6 +1,7 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 
 import { ApiService } from '../../core/services/api';
 
@@ -14,7 +15,8 @@ export interface Species {
 
 @Component({
   selector: 'app-species-list',
-  imports: [CommonModule, FormsModule],
+  standalone: true,
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './species-list.html',
   styleUrl: './species-list.css',
 })
@@ -26,35 +28,37 @@ export class SpeciesListComponent implements OnInit {
   searchTerm = '';
   selectedType = '';
 
-  loading = true;
-  error = '';
+  loading = signal(true);
+  error = signal('');
 
   ngOnInit(): void {
     this.loadSpecies();
   }
 
   loadSpecies(): void {
-    this.loading = true;
+    this.loading.set(true);
+    this.error.set('');
 
     this.api.get<Species[]>('/species').subscribe({
       next: (data) => {
         this.species = data;
-        this.loading = false;
+        this.loading.set(false);
       },
       error: () => {
-        this.error = 'Failed to load species';
-        this.loading = false;
+        this.error.set('Failed to load species');
+        this.loading.set(false);
       },
     });
   }
 
   applyFilters(): void {
-    this.loading = true;
+    this.loading.set(true);
+    this.error.set('');
 
-    const params = [];
+    const params: string[] = [];
 
     if (this.searchTerm.trim()) {
-      params.push(`q=${this.searchTerm}`);
+      params.push(`q=${encodeURIComponent(this.searchTerm)}`);
     }
 
     if (this.selectedType) {
@@ -66,11 +70,11 @@ export class SpeciesListComponent implements OnInit {
     this.api.get<Species[]>(`/species/search${queryString}`).subscribe({
       next: (data) => {
         this.species = data;
-        this.loading = false;
+        this.loading.set(false);
       },
       error: () => {
-        this.error = 'Failed to filter species';
-        this.loading = false;
+        this.error.set('Failed to filter species');
+        this.loading.set(false);
       },
     });
   }

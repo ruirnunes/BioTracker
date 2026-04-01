@@ -1,63 +1,153 @@
-.list-container {
-  max-width: 800px;
+.sightings-page {
+  max-width: 1000px;
   margin: 40px auto;
   padding: 20px;
+  color: #1f2937; /* garante legibilidade base */
 }
 
-.list {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 12px;
-  margin-top: 20px;
-}
-
-.header {
+/* =======================
+   CONTROLS BAR
+======================= */
+.sightings-controls {
   display: flex;
-  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
   align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: 20px;
+  padding: 12px;
+
+  border: 1px solid #e5e5e5;
+  border-radius: 10px;
+  background: #fafafa;
 }
 
-/* Card as link */
-a.card {
-  display: block;
-  padding: 16px;
+/* =======================
+   BUTTONS (FIX VISIBILIDADE)
+======================= */
+.sightings-controls button {
+  padding: 10px 14px;
   border-radius: 8px;
-  border: 1px solid #ddd;
-  background: #fff;
-  text-decoration: none;
-  color: inherit;
+  border: 1px solid #d1d5db;
+
+  background-color: #ffffff;
+  color: #1f2937 !important; /* 🔥 evita CSS global a matar texto */
+  font-size: 14px;
+  font-weight: 500;
+
   cursor: pointer;
   transition: all 0.2s ease;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  white-space: nowrap;
 }
 
-/* Hover */
-a.card:hover {
-  transform: translateY(-2px);
+.sightings-controls button:hover {
   border-color: #2d6a4f;
+  color: #2d6a4f;
+  transform: translateY(-1px);
 }
 
-/* Focus (keyboard accessibility) */
-a.card:focus {
-  outline: 2px solid #2d6a4f;
+.sightings-controls button:active {
+  transform: translateY(0px);
+}
+
+/* foco acessibilidade */
+.sightings-controls button:focus {
+  outline: 2px solid rgba(45, 106, 79, 0.3);
   outline-offset: 2px;
 }
 
-/* Optional: stronger focus for modern browsers */
-a.card:focus-visible {
-  outline: 3px solid #2d6a4f;
+/* =======================
+   SEARCH INPUT
+======================= */
+.sightings-controls input {
+  flex: 1;
+  min-width: 220px;
+
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+
+  outline: none;
+
+  font-size: 14px;
+  color: #1f2937;
+  background: #fff;
 }
 
-/* Text styles */
-.card h3 {
+.sightings-controls input:focus {
+  border-color: #2d6a4f;
+  box-shadow: 0 0 0 2px rgba(45, 106, 79, 0.15);
+}
+
+
+
+/* =======================
+   LIST GRID
+======================= */
+.sightings-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+}
+
+/* =======================
+   CARD
+======================= */
+.sighting-card {
+  padding: 16px;
+  border-radius: 10px;
+  border: 1px solid #e5e5e5;
+  background: #ffffff;
+
+  transition: all 0.2s ease;
+}
+
+.sighting-card:hover {
+  transform: translateY(-2px);
+  border-color: #2d6a4f;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+}
+
+/* TITLE */
+.sighting-card h3 {
   margin-bottom: 8px;
   color: #2d6cdf;
 }
 
-.card p {
+/* TEXT */
+.sighting-card p {
   margin: 4px 0;
   color: #2c3e50;
 }
 
+/* LINK */
+.sighting-card a {
+  display: inline-block;
+  margin-top: 10px;
+  color: #2d6a4f;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.sighting-card a:hover {
+  text-decoration: underline;
+}
+
+/* =======================
+   EMPTY / ERROR
+======================= */
 .error {
   color: #c1121f;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 20px;
+  color: #666;
 }

@@ -13,9 +13,7 @@ export class NavbarComponent {
   private auth = inject(AuthService);
   private router = inject(Router);
 
-  isLoggedIn(): boolean {
-    return this.auth.isLoggedIn();
-  }
+  isLoggedIn$ = this.auth.isLoggedIn$;
 
   logout(): void {
     this.auth.logout();

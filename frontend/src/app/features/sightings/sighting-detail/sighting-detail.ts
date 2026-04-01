@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { LoadingComponent } from '../../../shared/components/loading/loading';
@@ -18,7 +18,7 @@ export class SightingDetailComponent implements OnInit {
   private router = inject(Router);
 
   sighting: Sighting | null = null;
-  loading = true;
+  loading = signal(true);
   error = '';
 
   ngOnInit(): void {
@@ -26,7 +26,7 @@ export class SightingDetailComponent implements OnInit {
 
     if (!id) {
       this.error = 'Invalid sighting ID';
-      this.loading = false;
+      this.loading.set(false);
       return;
     }
 
@@ -34,16 +34,16 @@ export class SightingDetailComponent implements OnInit {
   }
 
   loadSighting(id: string): void {
-    this.loading = true;
+    this.loading.set(true);
 
     this.api.get<Sighting>(`/sightings/${id}`).subscribe({
       next: (data) => {
         this.sighting = data;
-        this.loading = false;
+        this.loading.set(false);
       },
       error: () => {
         this.error = 'Failed to load sighting';
-        this.loading = false;
+        this.loading.set(false);
       },
     });
   }

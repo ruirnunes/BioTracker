@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ApiService } from '../../../core/services/api';
 
@@ -15,8 +15,16 @@ interface Stats {
 
   latestSightings: {
     id: string;
-    species_id: string;
+    location: string;
+    date: string;
     created_at: string;
+    species: {
+      id: string;
+      common_name: string;
+      genus: string;
+      species: string;
+      type: string;
+    };
   }[];
 }
 
@@ -30,8 +38,8 @@ export class StatsComponent implements OnInit {
   private api = inject(ApiService);
 
   stats: Stats | null = null;
-  loading = true;
-  error = '';
+  loading = signal(true);
+  error = signal('');
 
   objectKeys = Object.keys;
 
@@ -40,17 +48,17 @@ export class StatsComponent implements OnInit {
   }
 
   loadStats(): void {
-    this.loading = true;
-    this.error = '';
+    this.loading.set(true);
+    this.error.set('');
 
     this.api.get<Stats>('/users/me/stats').subscribe({
       next: (data) => {
         this.stats = data;
-        this.loading = false;
+        this.loading.set(false);
       },
       error: () => {
-        this.error = 'Failed to load stats';
-        this.loading = false;
+        this.error.set('Failed to load stats');
+        this.loading.set(false);
       },
     });
   }

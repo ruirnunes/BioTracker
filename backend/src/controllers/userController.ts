@@ -9,6 +9,22 @@ type AuthRequest = Request & {
   user?: AuthUser;
 };
 
+type Species = {
+  id: string;
+  common_name: string;
+  genus: string;
+  species: string;
+  type: 'animal' | 'plant' | 'fungus';
+};
+
+type Sighting = {
+  id: string;
+  location: string;
+  date: string;
+  created_at: string;
+  species: Species;
+};
+
 // GET current user profile
 export const getMe = async (req: AuthRequest, res: Response) => {
   const user = req.user;
@@ -54,7 +70,7 @@ export const updateMe = async (req: AuthRequest, res: Response) => {
   return res.json(data);
 };
 
-// GET user stats (FULL VERSION)
+// GET user stats
 export const getUserStats = async (req: AuthRequest, res: Response) => {
   const user = req.user;
 
@@ -64,8 +80,21 @@ export const getUserStats = async (req: AuthRequest, res: Response) => {
 
   const { data: sightings, error } = await supabase
     .from('sightings')
-    .select('id, species_id, created_at')
-    .eq('user_id', user.id);
+    .select(`
+      id,
+      location,
+      date,
+      created_at,
+      species!inner (
+        id,
+        common_name,
+        genus,
+        species,
+        type
+      )
+    `)
+    .eq('user_id', user.id)
+    .returns<Sighting[]>();
 
   if (error) {
     return res.status(500).json({ error: error.message });
@@ -73,18 +102,48 @@ export const getUserStats = async (req: AuthRequest, res: Response) => {
 
   const safe = sightings ?? [];
 
+  // GET USER NAME
+  const { data: userData, error: userError } = await supabase
+    .from('users')
+    .select('name')
+    .eq('id', user.id)
+    .single();
+
+  if (userError) {
+    return res.status(500).json({ error: userError.message });
+  }
+
+  // TOTAL SIGHTINGS
   const totalSightings = safe.length;
 
+  // DISTINCT SPECIES
   const distinctSpecies = new Set(
-    safe.map(s => s.species_id)
+    safe.map(s => s.species.id)
   ).size;
 
+  // SPECIES PER TYPE
   const sightingsPerType: Record<string, number> = {};
 
+  for (const s of safe) {
+    const type = s.species.type || 'unknown';
+
+    sightingsPerType[type] =
+      (sightingsPerType[type] || 0) + 1;
+  }
+
+  // MOST ACTIVE USER (SELF)
+  const mostActiveUser = {
+    id: user.id,
+    name: userData?.name ?? 'Unknown',
+    sightingsCount: totalSightings
+  };
+
+  // LATEST SIGHTINGS
   const latestSightings = [...safe]
-    .sort((a, b) =>
-      new Date(b.created_at).getTime() -
-      new Date(a.created_at).getTime()
+    .sort(
+      (a, b) =>
+        new Date(b.created_at).getTime() -
+        new Date(a.created_at).getTime()
     )
     .slice(0, 5);
 
@@ -92,6 +151,7 @@ export const getUserStats = async (req: AuthRequest, res: Response) => {
     totalSightings,
     distinctSpecies,
     sightingsPerType,
+    mostActiveUser,
     latestSightings
   });
 };

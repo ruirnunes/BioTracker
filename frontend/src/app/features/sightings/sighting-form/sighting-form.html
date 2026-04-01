@@ -10,7 +10,7 @@
     <select id="species" formControlName="species_id">
       <option value="">Select a species</option>
 
-      @for (sp of speciesList; track sp.id) {
+      @for (sp of speciesList(); track sp.id) {
         <option [value]="sp.id">
           {{ sp.common_name }} ({{ sp.genus }} {{ sp.species }})
         </option>

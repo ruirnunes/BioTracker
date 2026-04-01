@@ -31,6 +31,8 @@
 
       <p><strong>Date:</strong> {{ sighting.date | date }}</p>
 
+      <p><strong>Observed by:</strong>{{ sighting.users?.name || 'Unknown user' }}</p>
+
       @if (sighting.image_url) {
         <img
           [src]="sighting.image_url"

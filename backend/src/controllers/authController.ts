@@ -62,15 +62,13 @@ export const login = async (req: Request, res: Response) => {
  * REGISTER
  */
 export const register = async (req: Request, res: Response) => {
-  console.log('BODY:', req.body);
-
   try {
     const { email, password, name } = req.body;
 
-    // Validate required fields
-    if (!email || !password) {
+    // ✅ Require name
+    if (!email || !password || !name || name.trim().length < 3) {
       return res.status(400).json({
-        message: 'Email and password are required',
+        message: 'Name, email and password are required (name must be at least 3 characters)',
       });
     }
 
@@ -80,12 +78,11 @@ export const register = async (req: Request, res: Response) => {
       password,
       options: {
         data: {
-          name: name || 'Anonymous',
+          name: name.trim(),
         },
       },
     });
 
-    // Handle Supabase errors (robust)
     if (error) {
       console.log('SUPABASE ERROR:', error);
 
@@ -120,26 +117,27 @@ export const register = async (req: Request, res: Response) => {
       });
     }
 
-    // Safety check
     if (!data.user) {
       return res.status(400).json({
         message: 'User creation failed',
       });
     }
 
-    // Insert into users table (fallback if trigger fails)
+    // ✅ ALWAYS insert real name (no fallback to Anonymous)
     const { error: userError } = await supabase.from('users').insert([
       {
         id: data.user.id,
-        name: name || 'Anonymous',
+        name: name.trim(),
       },
     ]);
 
     if (userError) {
       console.error('USER INSERT ERROR:', userError.message);
+      return res.status(500).json({
+        message: 'User created but failed to save profile',
+      });
     }
 
-    // Success response (session may be null)
     return res.status(200).json({
       user: data.user,
       session: data.session ?? null,

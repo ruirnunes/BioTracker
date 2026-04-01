@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { tap } from 'rxjs/operators';
+import { BehaviorSubject, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
 export interface SupabaseUser {
@@ -28,18 +28,24 @@ export class AuthService {
   private readonly http = inject(HttpClient);
   private readonly api = environment.apiUrl;
 
+  private readonly _isLoggedIn = new BehaviorSubject<boolean>(this.hasToken());
+  readonly isLoggedIn$ = this._isLoggedIn.asObservable();
+
+  private hasToken(): boolean {
+    const token = localStorage.getItem('token');
+    return !!token && token !== 'undefined' && token !== 'null';
+  }
+
   login(email: string, password: string) {
     return this.http
-      .post<LoginResponse>(`${this.api}/auth/login`, {
-        email,
-        password,
-      })
+      .post<LoginResponse>(`${this.api}/auth/login`, { email, password })
       .pipe(
-        tap((res: LoginResponse) => {
+        tap((res) => {
           const token = res.session?.access_token;
 
           if (token) {
             localStorage.setItem('token', token);
+            this._isLoggedIn.next(true);
           }
         })
       );
@@ -53,11 +59,12 @@ export class AuthService {
         password,
       })
       .pipe(
-        tap((res: LoginResponse) => {
+        tap((res) => {
           const token = res.session?.access_token;
 
           if (token) {
             localStorage.setItem('token', token);
+            this._isLoggedIn.next(true);
           }
         })
       );
@@ -65,14 +72,10 @@ export class AuthService {
 
   logout(): void {
     localStorage.removeItem('token');
+    this._isLoggedIn.next(false);
   }
 
   getToken(): string | null {
     return localStorage.getItem('token');
-  }
-
-  isLoggedIn(): boolean {
-    const token = this.getToken();
-    return token !== null && token !== 'undefined' && token !== 'null';
   }
 }

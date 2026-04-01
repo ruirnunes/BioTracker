@@ -5,7 +5,7 @@
 
   <div class="nav-right">
 
-    @if (isLoggedIn()) {
+    @if (isLoggedIn$ | async) {
       <a routerLink="/sightings">Sightings</a>
       <a routerLink="/species">Species</a>
       <a routerLink="/dashboard">Dashboard</a>

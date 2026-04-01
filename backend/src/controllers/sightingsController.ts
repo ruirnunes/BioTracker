@@ -1,5 +1,5 @@
 import type { Request, Response } from 'express';
-import supabase from '../supabaseClient.js';
+import { supabaseWithAuth } from '../utils/supabaseWithAuth.js';
 
 interface Sighting {
   id?: string;
@@ -10,18 +10,34 @@ interface Sighting {
   image_url?: string;
 }
 
-// GET all sightings (apenas do utilizador logado)
+// Helper to extract token
+const getTokenFromRequest = (req: Request): string | null => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader) return null;
+  return authHeader.replace('Bearer ', '');
+};
+
+// GET all sightings (only logged user)
 export const getSightings = async (req: Request, res: Response) => {
-  const user = (req as any).user;
+  const token = getTokenFromRequest(req);
+
+  if (!token) {
+    return res.status(401).json({ error: 'No token provided' });
+  }
+
+  const supabase = supabaseWithAuth(token);
 
   const { data, error } = await supabase
     .from('sightings')
     .select(`
       id,
-      species_id,
       location,
       date,
       image_url,
+      users:user_id (
+        id,
+        name
+      ),
       species:species_id (
         id,
         common_name,
@@ -30,23 +46,32 @@ export const getSightings = async (req: Request, res: Response) => {
         type
       )
     `)
-    .eq('user_id', user.id);
+    .order('created_at', { ascending: false });
 
-  if (error) return res.status(500).json({ error: error.message });
+  if (error) {
+    console.error('Supabase error:', error);
+    return res.status(500).json({ error: error.message });
+  }
 
   res.json(data);
 };
 
-// GET one sighting (apenas do owner)
+// GET one sighting (only owner)
 export const getSightingById = async (req: Request, res: Response) => {
-  const user = (req as any).user;
+  const token = getTokenFromRequest(req);
+
+  if (!token) {
+    return res.status(401).json({ error: 'No token provided' });
+  }
+
+  const supabase = supabaseWithAuth(token);
   const { id } = req.params;
 
   const { data, error } = await supabase
     .from('sightings')
     .select(`
       id,
-      species_id,
+      user_id,
       location,
       date,
       image_url,
@@ -56,10 +81,13 @@ export const getSightingById = async (req: Request, res: Response) => {
         genus,
         species,
         type
+      ),
+      users:user_id (
+        id,
+        name
       )
     `)
     .eq('id', id)
-    .eq('user_id', user.id)
     .single();
 
   if (error || !data) {
@@ -71,6 +99,13 @@ export const getSightingById = async (req: Request, res: Response) => {
 
 // CREATE
 export const createSighting = async (req: Request, res: Response) => {
+  const token = getTokenFromRequest(req);
+
+  if (!token) {
+    return res.status(401).json({ error: 'No token provided' });
+  }
+
+  const supabase = supabaseWithAuth(token);
   const user = (req as any).user;
 
   const { species_id, location, date, image_url } = req.body as Sighting;
@@ -93,13 +128,23 @@ export const createSighting = async (req: Request, res: Response) => {
     .select()
     .single();
 
-  if (error) return res.status(500).json({ error: error.message });
+  if (error) {
+    console.error('Supabase error:', error);
+    return res.status(500).json({ error: error.message });
+  }
 
   res.status(201).json(data);
 };
 
-// UPDATE (owner only) — versão segura
+// UPDATE (owner only)
 export const updateSighting = async (req: Request, res: Response) => {
+  const token = getTokenFromRequest(req);
+
+  if (!token) {
+    return res.status(401).json({ error: 'No token provided' });
+  }
+
+  const supabase = supabaseWithAuth(token);
   const user = (req as any).user;
   const { id } = req.params;
 
@@ -120,7 +165,10 @@ export const updateSighting = async (req: Request, res: Response) => {
     .select()
     .single();
 
-  if (error) return res.status(500).json({ error: error.message });
+  if (error) {
+    console.error('Supabase error:', error);
+    return res.status(500).json({ error: error.message });
+  }
 
   if (!data) {
     return res.status(404).json({ error: 'Not found or not allowed' });
@@ -129,8 +177,15 @@ export const updateSighting = async (req: Request, res: Response) => {
   res.json(data);
 };
 
-// DELETE (owner only) — versão segura
+// DELETE (owner only)
 export const deleteSighting = async (req: Request, res: Response) => {
+  const token = getTokenFromRequest(req);
+
+  if (!token) {
+    return res.status(401).json({ error: 'No token provided' });
+  }
+
+  const supabase = supabaseWithAuth(token);
   const user = (req as any).user;
   const { id } = req.params;
 
@@ -141,7 +196,10 @@ export const deleteSighting = async (req: Request, res: Response) => {
     .eq('user_id', user.id)
     .select();
 
-  if (error) return res.status(500).json({ error: error.message });
+  if (error) {
+    console.error('Supabase error:', error);
+    return res.status(500).json({ error: error.message });
+  }
 
   if (!data || data.length === 0) {
     return res.status(404).json({ error: 'Not found or not allowed' });
@@ -150,26 +208,33 @@ export const deleteSighting = async (req: Request, res: Response) => {
   res.json({ message: 'Deleted successfully' });
 };
 
-// STATS 
+// STATS
 export const getStats = async (req: Request, res: Response) => {
-  // 1. Fetch all sightings from the database
+  const token = getTokenFromRequest(req);
+
+  if (!token) {
+    return res.status(401).json({ error: 'No token provided' });
+  }
+
+  const supabase = supabaseWithAuth(token);
+
   const { data, error } = await supabase
     .from('sightings')
     .select('user_id, species_id');
 
-  if (error) return res.status(500).json({ error: error.message });
+  if (error) {
+    console.error('Supabase error:', error);
+    return res.status(500).json({ error: error.message });
+  }
 
   const sightings = data || [];
 
-  // 2. Calculate total number of sightings
   const totalSightings = sightings.length;
 
-  // 3. Calculate number of distinct species
   const distinctSpecies = new Set(
     sightings.map(s => s.species_id)
   ).size;
 
-  // 4. Count sightings per user
   const userCountMap: Record<string, number> = {};
 
   for (const s of sightings) {
@@ -179,7 +244,6 @@ export const getStats = async (req: Request, res: Response) => {
     userCountMap[s.user_id]++;
   }
 
-  // 5. Determine the most active user
   let mostActiveUserId: string | null = null;
   let maxCount = 0;
 
@@ -190,7 +254,6 @@ export const getStats = async (req: Request, res: Response) => {
     }
   }
 
-  // 6. Optionally fetch user details from the users table
   let mostActiveUser = null;
 
   if (mostActiveUserId) {
@@ -203,7 +266,6 @@ export const getStats = async (req: Request, res: Response) => {
     mostActiveUser = userData;
   }
 
-  // 7. Return the final stats response
   res.json({
     totalSightings,
     distinctSpecies,

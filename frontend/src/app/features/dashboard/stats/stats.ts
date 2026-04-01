@@ -15,8 +15,16 @@ interface Stats {
 
   latestSightings: {
     id: string;
-    species_id: string;
+    location: string;
+    date: string;
     created_at: string;
+    species: {
+      id: string;
+      common_name: string;
+      genus: string;
+      species: string;
+      type: string;
+    };
   }[];
 }
 
@@ -31,7 +39,7 @@ export class StatsComponent implements OnInit {
 
   stats: Stats | null = null;
   loading = signal(true);
-  error = '';
+  error = signal('');
 
   objectKeys = Object.keys;
 
@@ -41,7 +49,7 @@ export class StatsComponent implements OnInit {
 
   loadStats(): void {
     this.loading.set(true);
-    this.error = '';
+    this.error.set('');
 
     this.api.get<Stats>('/users/me/stats').subscribe({
       next: (data) => {
@@ -49,7 +57,7 @@ export class StatsComponent implements OnInit {
         this.loading.set(false);
       },
       error: () => {
-        this.error = 'Failed to load stats';
+        this.error.set('Failed to load stats');
         this.loading.set(false);
       },
     });

@@ -1,6 +1,7 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 
 import { ApiService } from '../../core/services/api';
 
@@ -14,7 +15,8 @@ export interface Species {
 
 @Component({
   selector: 'app-species-list',
-  imports: [CommonModule, FormsModule],
+  standalone: true,
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './species-list.html',
   styleUrl: './species-list.css',
 })
@@ -35,6 +37,7 @@ export class SpeciesListComponent implements OnInit {
 
   loadSpecies(): void {
     this.loading.set(true);
+    this.error.set('');
 
     this.api.get<Species[]>('/species').subscribe({
       next: (data) => {
@@ -50,11 +53,12 @@ export class SpeciesListComponent implements OnInit {
 
   applyFilters(): void {
     this.loading.set(true);
+    this.error.set('');
 
-    const params = [];
+    const params: string[] = [];
 
     if (this.searchTerm.trim()) {
-      params.push(`q=${this.searchTerm}`);
+      params.push(`q=${encodeURIComponent(this.searchTerm)}`);
     }
 
     if (this.selectedType) {
@@ -69,7 +73,7 @@ export class SpeciesListComponent implements OnInit {
         this.loading.set(false);
       },
       error: () => {
-        this.error.set('Failed to filter species')
+        this.error.set('Failed to filter species');
         this.loading.set(false);
       },
     });

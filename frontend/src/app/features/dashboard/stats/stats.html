@@ -8,17 +8,21 @@
     </div>
   }
 
-  @if (error) {
+  @if (error()) {
     <div class="error">
-      {{ error }}
+      {{ error() }}
     </div>
   }
 
   @if (stats && !loading()) {
+
+    <!-- =======================
+         STATS GRID (KPI CARDS)
+    ======================== -->
     <div class="stats-grid">
 
       <div class="card">
-        <h3>Total Sightings</h3>
+        <h3>My Sightings</h3>
         <p>{{ stats.totalSightings }}</p>
       </div>
 
@@ -27,7 +31,7 @@
         <p>{{ stats.distinctSpecies }}</p>
       </div>
 
-      <div>
+      <div class="card">
         <h3>Species by type</h3>
 
         @for (type of objectKeys(stats.sightingsPerType); track type) {
@@ -49,6 +53,44 @@
       </div>
 
     </div>
+
+    <!-- =======================
+         LATEST SIGHTINGS FEED
+    ======================== -->
+    <div class="card sightings-list">
+
+      <h3>Latest Sightings</h3>
+
+      @if (stats.latestSightings.length) {
+
+        @for (sighting of stats.latestSightings; track sighting.id) {
+
+          <div class="sighting-card">
+
+            <h4>
+              {{ sighting.species.common_name }}
+            </h4>
+
+            <p>
+              {{ sighting.location }}
+            </p>
+
+            <small>
+              {{ sighting.created_at | date:'short' }}
+            </small>
+
+          </div>
+
+        }
+
+      } @else {
+
+        <p>No sightings found</p>
+
+      }
+
+    </div>
+
   }
 
 </div>

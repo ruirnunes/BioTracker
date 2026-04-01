@@ -3,6 +3,19 @@
     <h2>{{ isLogin ? 'Login' : 'Register' }}</h2>
 
     <form (ngSubmit)="submit()">
+
+      @if (!isLogin) {
+        <label for="name">Name</label>
+        <input
+          id="name"
+          type="text"
+          [(ngModel)]="name"
+          name="name"
+          placeholder="enter your name"
+          required
+        />
+      }
+
       <label for="email">Email</label>
       <input
         id="email"

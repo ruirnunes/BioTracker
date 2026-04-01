@@ -1,0 +1,23 @@
+@if (loading()) {
+  <div class="loading">Loading species...</div>
+}
+
+@if (error) {
+  <div class="error">{{ error }}</div>
+}
+
+@if (species) {
+  <div class="species-detail">
+    <h1>{{ species.common_name }}</h1>
+
+    <div class="info">
+      <h3>Scientific name</h3>
+      <p>{{ species.genus }} {{ species.species }}</p>
+    </div>
+
+    <div class="info">
+      <h3>Type</h3>
+      <p>{{ species.type }}</p>
+    </div>
+  </div>
+}

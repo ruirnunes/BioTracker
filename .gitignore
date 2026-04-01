@@ -1,7 +1,7 @@
 # Variáveis de ambiente
 .env
-frontend/src/environments/environment.ts
-frontend/src/environments/environment.development.ts
+frontend/src/environments/
+# frontend/src/environments/environment.development.ts
 
 # Node modules
 node_modules/

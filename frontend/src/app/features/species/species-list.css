@@ -1,0 +1,156 @@
+.list-container {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 20px;
+}
+
+/* HEADER ACTION (ADD BUTTON) */
+.list-container > a {
+  display: inline-block;
+  margin-bottom: 15px;
+  padding: 10px 14px;
+  background: #2d6cdf;
+  color: white;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: 0.2s ease;
+}
+
+.list-container > a:hover {
+  background: #1f4fbf;
+}
+
+/* GRID */
+.list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+/* CARD */
+a.card {
+  display: block;
+  padding: 16px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  background: #fff;
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.2s ease;
+}
+
+a.card:hover {
+  transform: translateY(-3px);
+  border-color: #2d6a4f;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+a.card:focus-visible {
+  outline: 3px solid #2d6a4f;
+}
+
+/* TEXT */
+.card h3 {
+  margin-bottom: 6px;
+  color: #2d6cdf;
+}
+
+.scientific {
+  font-style: italic;
+  color: #7f8c8d;
+  margin-bottom: 8px;
+}
+
+/* BADGE */
+.badge {
+  display: inline-block;
+  padding: 4px 8px;
+  font-size: 12px;
+  border-radius: 6px;
+  text-transform: capitalize;
+  font-weight: 600;
+}
+
+.badge.animal {
+  background: #e3f2fd;
+  color: #1565c0;
+}
+
+.badge.plant {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.badge.fungus {
+  background: #f3e5f5;
+  color: #6a1b9a;
+}
+
+/* ACTIONS (EDIT BUTTON AREA) */
+.actions {
+  margin-top: 10px;
+  display: flex;
+  gap: 10px;
+}
+
+/* EDIT BUTTON */
+.actions a {
+  font-size: 13px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 600;
+  background: #e5e7eb;
+  color: #111827;
+  transition: 0.2s ease;
+}
+
+.actions a:hover {
+  background: #d1d5db;
+}
+
+/* DELETE BUTTON (se tiveres) */
+.actions button {
+  font-size: 13px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  background: #fee2e2;
+  color: #b91c1c;
+  transition: 0.2s ease;
+}
+
+.actions button:hover {
+  background: #fecaca;
+}
+
+/* SEARCH + FILTERS */
+.search-box {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.search-box input {
+  flex: 1;
+}
+
+.filters {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.filters input,
+.filters select {
+  flex: 1;
+}
+
+/* ERROR */
+.error {
+  color: #c1121f;
+}

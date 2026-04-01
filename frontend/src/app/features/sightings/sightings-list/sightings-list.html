@@ -1,0 +1,62 @@
+<div class="sightings-page">
+
+  <!-- CONTROLS -->
+  <div class="sightings-controls">
+
+    <button type="button" (click)="toggleMySightings()">
+      {{ showMineOnly() ? 'Show all sightings' : 'My sightings' }}
+    </button>
+
+    <input
+      type="text"
+      placeholder="Search by species or location..."
+      (input)="onSearch($event)"
+    />
+
+    <button type="button" (click)="toggleSort()">
+      Sort by date: {{ sortDesc() ? 'Newest' : 'Oldest' }}
+    </button>
+
+    <!-- 👇 ESTE É O NOVO BOTÃO -->
+    <button
+      type="button"
+      class="add-btn"
+      [routerLink]="['/sightings/new']"
+    >
+      + Add sighting
+    </button>
+
+  </div>
+
+  <!-- LIST -->
+  <div class="sightings-list">
+
+    @for (sighting of filteredSightings(); track sighting.id) {
+
+      <div class="sighting-card">
+
+        <h3>{{ sighting.species?.common_name || 'Unknown species' }}</h3>
+
+        <p><strong>Location:</strong> {{ sighting.location }}</p>
+
+        <p>
+          <strong>Date:</strong>
+          {{ sighting.date | date }}
+        </p>
+
+        <p>
+          <strong>Observed by:</strong>
+          {{ sighting.users?.name || 'Unknown user' }}
+        </p>
+
+        <a [routerLink]="['/sightings', sighting.id]">
+          View details
+        </a>
+
+      </div>
+
+    }
+
+  </div>
+
+</div>

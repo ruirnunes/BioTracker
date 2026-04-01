@@ -1,4 +1,3 @@
-// backend/src/routes/sightings.ts
 import express from 'express';
 import {
   getSightings,
@@ -9,14 +8,29 @@ import {
   getStats
 } from '../controllers/sightingsController.js';
 
+import { auth } from '../middleware/auth.js';
+
 const router = express.Router();
 
-// Sightings CRUD routes
-router.get('/', getSightings);           // Get all sightings
-router.get('/stats', getStats);          // Get statistics
-router.get('/:id', getSightingById);     // Get a sighting by id
-router.post('/', createSighting);        // Create new sighting
-router.put('/:id', updateSighting);      // Update a sighting
-router.delete('/:id', deleteSighting);   // Delete a sighting
+// Apply auth to all routes
+router.use(auth);
+
+// GET all sightings (only logged user)
+router.get('/', getSightings);
+
+// GET stats
+router.get('/stats', getStats);
+
+// GET one sighting
+router.get('/:id', getSightingById);
+
+// CREATE
+router.post('/', createSighting);
+
+// UPDATE (no need for auth again)
+router.put('/:id', updateSighting);
+
+// DELETE (no need for auth again)
+router.delete('/:id', deleteSighting);
 
 export default router;

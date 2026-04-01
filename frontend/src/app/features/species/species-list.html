@@ -1,0 +1,67 @@
+<div class="list-container">
+  <h2>Species</h2>
+
+  <!-- ADD BUTTON -->
+  <a class="add-btn" routerLink="/species/new">
+    + Add Species
+  </a>
+
+  <!-- FILTERS -->
+  <div class="filters">
+
+    <input
+      type="text"
+      [(ngModel)]="searchTerm"
+      placeholder="Search species..."
+    />
+
+    <select [(ngModel)]="selectedType">
+      <option value="">All types</option>
+      <option value="animal">Animal</option>
+      <option value="plant">Plant</option>
+      <option value="fungus">Fungus</option>
+    </select>
+
+    <button (click)="applyFilters()">Apply</button>
+    <button (click)="clearFilters()">Reset</button>
+
+  </div>
+
+  @if (loading()) {
+    <p>Loading species...</p>
+  }
+
+  @if (error()) {
+    <p class="error">{{ error() }}</p>
+  }
+
+  @if (!loading() && !error() && species.length === 0) {
+    <p>No species found.</p>
+  }
+
+  <div class="list">
+    @for (item of species; track item.id) {
+      <a class="card" [routerLink]="['/species', item.id]">
+
+        <div class="card-header">
+          <h3>{{ item.common_name }}</h3>
+
+          <span class="badge" [class]="item.type">
+            {{ item.type }}
+          </span>
+        </div>
+
+        <p class="scientific">
+          {{ item.genus }} {{ item.species }}
+        </p>
+
+        <div class="actions">
+          <a [routerLink]="['/species', item.id, 'edit']">
+            Edit
+          </a>
+        </div>
+
+      </a>
+    }
+  </div>
+</div>

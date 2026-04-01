@@ -1,0 +1,57 @@
+<div class="form-container">
+  <h2>
+    {{ isEdit ? 'Edit Species' : 'New Species' }}
+  </h2>
+
+  <form [formGroup]="form" (ngSubmit)="submit()">
+
+    <!-- Common Name -->
+    <label for="common_name">Common Name</label>
+    <input id="common_name" type="text" formControlName="common_name" />
+
+    @if (f.common_name.touched && f.common_name.invalid) {
+      <p class="error">Common name is required (min 2 chars).</p>
+    }
+
+    <!-- Genus -->
+    <label for="genus">Genus</label>
+    <input id="genus" type="text" formControlName="genus" />
+
+    @if (f.genus.touched && f.genus.invalid) {
+      <p class="error">Genus is required.</p>
+    }
+
+    <!-- Species -->
+    <label for="species">Species</label>
+    <input id="species" type="text" formControlName="species" />
+
+    @if (f.species.touched && f.species.invalid) {
+      <p class="error">Species is required.</p>
+    }
+
+    <!-- Type -->
+    <label for="type">Type</label>
+    <select id="type" formControlName="type">
+      <option disabled value="">Select type</option>
+      <option value="animal">Animal</option>
+      <option value="plant">Plant</option>
+      <option value="fungus">Fungus</option>
+    </select>
+
+    @if (f.type.touched && f.type.invalid) {
+      <p class="error">Type is required.</p>
+    }
+
+    <!-- Submit -->
+    <button type="submit" [disabled]="loading()">
+      {{ loading()
+        ? (isEdit ? 'Updating...' : 'Creating...')
+        : (isEdit ? 'Update Species' : 'Create Species') }}
+    </button>
+
+    @if (error) {
+      <p class="error">{{ error }}</p>
+    }
+
+  </form>
+</div>

@@ -1,0 +1,60 @@
+<div class="auth-container">
+  <div class="auth-card">
+    <h2>{{ isLogin ? 'Login' : 'Register' }}</h2>
+
+    <form (ngSubmit)="submit()">
+
+      @if (!isLogin) {
+        <label for="name">Name</label>
+        <input
+          id="name"
+          type="text"
+          [(ngModel)]="name"
+          name="name"
+          placeholder="enter your name"
+          required
+        />
+      }
+
+      <label for="email">Email</label>
+      <input
+        id="email"
+        type="email"
+        [(ngModel)]="email"
+        name="email"
+        placeholder="enter your email"
+        required
+      />
+
+      <label for="password">Password</label>
+      <input
+        id="password"
+        type="password"
+        [(ngModel)]="password"
+        name="password"
+        placeholder="enter your password"
+        required
+      />
+
+      <button type="submit" [disabled]="loading()">
+        {{ loading() ? 'Processing...' : (isLogin ? 'Login' : 'Create account') }}
+      </button>
+
+      @if (error()) {
+        <p class="error">
+          {{ error() }}
+        </p>
+      }
+    </form>
+
+    <p class="toggle">
+      <span>
+        {{ isLogin ? "Don't have an account?" : 'Already have an account?' }}
+      </span>
+
+      <button type="button" class="link" (click)="toggleMode()">
+        {{ isLogin ? 'Register' : 'Login' }}
+      </button>
+    </p>
+  </div>
+</div>

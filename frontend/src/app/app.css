@@ -1,0 +1,31 @@
+.app-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  background-color: #2d6cdf;
+  color: white;
+  padding: 15px 20px;
+}
+
+.header h1 {
+  font-size: 20px;
+}
+
+.app-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.content {
+  flex: 1;
+  padding: 20px;
+}
+
+.content {
+  flex: 1;
+  padding: 20px;
+}

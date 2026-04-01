@@ -11,17 +11,13 @@ jobs:
   frontend:
     runs-on: ubuntu-latest
 
-    defaults:
-      run:
-        working-directory: frontend
-
     env:
       API_URL: http://localhost:3000
       SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
       SUPABASE_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
 
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Setup Node
@@ -29,12 +25,14 @@ jobs:
         with:
           node-version: 20
           cache: npm
+          cache-dependency-path: frontend/package-lock.json
 
       - name: Install dependencies
         working-directory: frontend
         run: npm ci
 
       - name: Generate Angular environment files
+        working-directory: frontend
         run: |
           mkdir -p src/environments
 
@@ -56,8 +54,10 @@ jobs:
           };
           EOF
 
-      - name: Lint
+      - name: Lint frontend
+        working-directory: frontend
         run: npm run lint
 
-      - name: Build Angular app
+      - name: Build frontend (production)
+        working-directory: frontend
         run: npm run build -- --configuration production

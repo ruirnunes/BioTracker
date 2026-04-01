@@ -31,6 +31,7 @@ jobs:
           cache: npm
 
       - name: Install dependencies
+        working-directory: frontend
         run: npm ci
 
       - name: Generate Angular environment files

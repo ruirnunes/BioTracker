@@ -23,15 +23,21 @@
       </p>
 
       <p>
-        <strong>Type:</strong>
-        {{ sighting.species?.type }}
+        <strong>Type:</strong> {{ sighting.species?.type }}
       </p>
 
-      <p><strong>Location:</strong> {{ sighting.location }}</p>
+      <p>
+        <strong>Location:</strong> {{ sighting.location }}
+      </p>
 
-      <p><strong>Date:</strong> {{ sighting.date | date }}</p>
+      <p>
+        <strong>Date:</strong> {{ sighting.date | date }}
+      </p>
 
-      <p><strong>Observed by:</strong>{{ sighting.users?.name || 'Unknown user' }}</p>
+      <p>
+        <strong>Observed by:</strong>
+        {{ sighting.users?.name || 'Unknown user' }}
+      </p>
 
       @if (sighting.image_url) {
         <img
@@ -41,13 +47,15 @@
         />
       }
 
-      <a [routerLink]="['/sightings/edit', sighting.id]">
-        <button>Edit</button>
-      </a>
+      <div class="actions">
+        <a [routerLink]="['/sightings/edit', sighting.id]" class="btn">
+          Edit
+        </a>
 
-      <button (click)="delete()" class="delete-btn">
-        Delete
-      </button>
+        <button (click)="delete()" class="btn delete">
+          Delete
+        </button>
+      </div>
 
     </div>
   }

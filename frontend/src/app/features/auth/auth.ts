@@ -57,7 +57,7 @@ export class AuthComponent {
           return;
         }
 
-        this.router.navigate(['/sightings']);
+        this.router.navigate(['/dashboard']);
       },
 
       error: (err) => {

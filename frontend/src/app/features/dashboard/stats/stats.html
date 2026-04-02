@@ -3,91 +3,85 @@
   <h2>Dashboard Overview</h2>
 
   @if (loading()) {
-    <div class="loading">
-      Loading statistics...
-    </div>
+    <div class="loading">Loading statistics...</div>
   }
 
   @if (error()) {
-    <div class="error">
-      {{ error() }}
-    </div>
+    <div class="error">{{ error() }}</div>
   }
 
-  @if (stats && !loading()) {
+  @if (stats() && !loading()) {
 
-    <!-- =======================
-         STATS GRID (KPI CARDS)
-    ======================== -->
-    <div class="stats-grid">
+    <!-- ROW 1 -->
+    <div class="stats-row">
 
-      <div class="card">
+      <div class="card stat-card">
         <h3>My Sightings</h3>
-        <p>{{ stats.totalSightings }}</p>
+        <p>{{ stats()!.totalSightings }}</p>
       </div>
 
-      <div class="card">
+      <div class="card stat-card">
         <h3>Distinct Species</h3>
-        <p>{{ stats.distinctSpecies }}</p>
+        <p>{{ stats()!.distinctSpecies }}</p>
       </div>
 
-      <div class="card">
-        <h3>Species by type</h3>
-
-        @for (type of objectKeys(stats.sightingsPerType); track type) {
-          <p>
-            {{ type }}: {{ stats.sightingsPerType[type] }}
-          </p>
-        }
-      </div>
-
-      <div class="card">
+      <div class="card stat-card">
         <h3>Most Active User</h3>
 
-        @if (stats.mostActiveUser) {
-          <p>{{ stats.mostActiveUser.name }}</p>
-          <small>
-            {{ stats.mostActiveUser.sightingsCount }} sightings
-          </small>
+        @if (stats()!.mostActiveUser) {
+          <p>{{ stats()!.mostActiveUser!.name }}</p>
+          <small>{{ stats()!.mostActiveUser!.sightingsCount }} sightings</small>
         }
       </div>
 
     </div>
 
-    <!-- =======================
-         LATEST SIGHTINGS FEED
-    ======================== -->
-    <div class="card sightings-list">
+    <!-- ROW 2 -->
+    <div class="stats-row">
+
+      <div class="card stat-card animal">
+        <h3>Animals</h3>
+        <p>{{ stats()!.sightingsPerType['animal'] || 0 }}</p>
+      </div>
+
+      <div class="card stat-card plant">
+        <h3>Plants</h3>
+        <p>{{ stats()!.sightingsPerType['plant'] || 0 }}</p>
+      </div>
+
+      <div class="card stat-card fungus">
+        <h3>Fungus</h3>
+        <p>{{ stats()!.sightingsPerType['fungus'] || 0 }}</p>
+      </div>
+
+    </div>
+
+    <!-- ROW 3: LATEST SIGHTINGS -->
+    <div class="latest-card">
 
       <h3>Latest Sightings</h3>
 
-      @if (stats.latestSightings.length) {
+      <div class="latest-list">
 
-        @for (sighting of stats.latestSightings; track sighting.id) {
+        @if (stats()!.latestSightings.length) {
 
-          <div class="sighting-card">
+          @for (sighting of stats()!.latestSightings; track sighting.id) {
 
-            <h4>
-              {{ sighting.species.common_name }}
-            </h4>
+            <div class="sighting-card">
 
-            <p>
-              {{ sighting.location }}
-            </p>
+              <h4>{{ sighting.species.common_name }}</h4>
+              <p>{{ sighting.location }}</p>
+              <small>{{ sighting.created_at | date:'short' }}</small>
 
-            <small>
-              {{ sighting.created_at | date:'short' }}
-            </small>
+            </div>
 
-          </div>
+          }
 
+        } @else {
+          <p>No sightings found</p>
         }
 
-      } @else {
-
-        <p>No sightings found</p>
-
-      }
+      </div>
 
     </div>
 

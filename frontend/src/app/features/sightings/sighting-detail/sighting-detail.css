@@ -1,47 +1,74 @@
 .detail-container {
+  max-width: 800px;
+  margin: 0 auto;
   padding: 20px;
 }
 
-h2 {
-  margin-bottom: 20px;
-  color: #2c3e50;
+/* título */
+.detail-container h2 {
+  margin-bottom: 16px;
+  color: var(--text);
 }
 
-.loading {
-  padding: 15px;
-  color: #666;
-}
-
-.error {
-  padding: 15px;
-  background-color: #ffe6e6;
-  color: #c0392b;
-  border-radius: 6px;
-}
-
+/* CARD PRINCIPAL */
 .card {
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+
+  padding: 18px;
 }
 
-.card h3 {
-  margin-bottom: 15px;
-  color: #2d6cdf;
-}
-
+/* remove spacing extra dos parágrafos */
 .card p {
-  margin-bottom: 10px;
-  color: #2c3e50;
+  margin: 0;
+  line-height: 1.4;
+  color: var(--text);
 }
 
-.delete-btn {
+/* imagem */
+.image {
+  width: 100%;
+  border-radius: 12px;
   margin-top: 10px;
-  background-color: #e74c3c;
+}
+
+/* actions */
+.actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+/* botões base */
+.btn {
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: none;
+
+  background: var(--secondary);
+  color: var(--text);
+  text-decoration: none;
+
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn:hover {
+  opacity: 0.9;
+}
+
+/* delete destacado */
+.delete {
+  background: var(--danger);
   color: white;
 }
 
-.delete-btn:hover {
-  background-color: #c0392b;
+/* erro */
+.error {
+  color: #e74c3c;
 }

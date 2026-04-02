@@ -44,7 +44,38 @@ This project contributes to **ODS 15 — Life on Land** by promoting citizen par
 ## Project Structure
 
 ```plaintext
-projeto-final/ ├── frontend/ # Angular application │ ├── src/ │ │ ├── main.ts │ │ │ │ │ ├── environments/ # Environment configs │ │ │ ├── environment.ts │ │ │ ├── environment.development.ts │ │ │ ├── environment.prod.ts │ │ │ └── environment.example.ts │ │ │ │ │ ├── app/ │ │ │ ├── app.ts │ │ │ ├── app.routes.ts │ │ │ │ │ │ │ ├── core/ # Singleton services & app-wide logic │ │ │ │ ├── services/ │ │ │ │ │ ├── api.ts │ │ │ │ │ ├── auth.ts │ │ │ │ │ └── species.ts │ │ │ │ │ │ │ │ │ ├── interceptors/ │ │ │ │ │ └── auth-interceptor.ts │ │ │ │ │ │ │ │ │ └── guards/ │ │ │ │ └── auth-guard.ts │ │ │ │ │ │ │ ├── shared/ # Reusable UI + models │ │ │ │ ├── components/ │ │ │ │ │ ├── navbar/ │ │ │ │ │ └── loading/ │ │ │ │ │ │ │ │ │ └── models/ │ │ │ │ ├── sighting.model.ts │ │ │ │ ├── species.model.ts │ │ │ │ ├── user.model.ts │ │ │ │ └── user-stats.model.ts │ │ │ │ │ │ │ └── features/ # Feature-based modules │ │ │ ├── auth/ │ │ │ ├── sightings/ │ │ │ │ ├── sightings-list/ │ │ │ │ ├── sighting-detail/ │ │ │ │ └── sighting-form/ │ │ │ │ │ │ │ ├── species/ │ │ │ │ ├── species-list/ │ │ │ │ ├── species-detail/ │ │ │ │ └── species-form/ │ │ │ │ │ │ │ └── dashboard/ │ │ │ └── stats/ │ │ │ │ ├── backend/ # Node.js + Express API │ ├── src/ │ │ ├── controllers/ │ │ │ ├── authController.ts │ │ │ ├── sightingsController.ts │ │ │ ├── speciesController.ts │ │ │ └── userController.ts │ │ │ │ │ ├── routes/ │ │ │ ├── auth.ts │ │ │ ├── sightings.ts │ │ │ ├── species.ts │ │ │ └── user.ts │ │ │ │ │ ├── middleware/ │ │ │ └── auth.ts │ │ │ │ │ ├── utils/ │ │ │ └── supabaseWithAuth.ts │ │ │ │ │ ├── types/ │ │ │ └── express.d.ts │ │ │ │ │ ├── supabaseClient.ts │ │ └── app.ts │ ├── docker-compose.yml └── README.md
+projeto-final/
+├── frontend/
+│   └── src/
+│       ├── app/
+│       │   ├── core/
+│       │   │   ├── services/
+│       │   │   ├── interceptors/
+│       │   │   └── guards/
+│       │   │
+│       │   ├── shared/
+│       │   │   ├── components/
+│       │   │   └── models/
+│       │   │
+│       │   └── features/
+│       │       ├── auth/
+│       │       ├── sightings/
+│       │       ├── species/
+│       │       └── dashboard/
+│       │
+│       └── main.ts
+│
+├── backend/
+│   └── src/
+│       ├── controllers/
+│       ├── routes/
+│       ├── middleware/
+│       ├── utils/
+│       ├── types/
+│       └── supabaseClient.ts
+│
+├── docker-compose.yml
+└── README.md
 ```
 
 ---

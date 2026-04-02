@@ -11,7 +11,12 @@ This project contributes to **ODS 15 — Life on Land** by promoting citizen par
 ---
 
 ## Application Preview
-*(Add a screenshot or GIF here — e.g. dashboard + sightings list)*
+
+### Dashboard
+![Dashboard](./docs/images/Dashboard-BioTracker.png)
+
+### Sightings
+![Sightings](./docs/images/Sightings-BioTracker.png)
 
 ---
 

@@ -1,41 +1,196 @@
+:root {
+  /* =====================
+     THEME (NEW PALETTE)
+     ===================== */
+
+  --main: #1A3636;
+  --secondary: #40534C;
+  --tertiary: #677D6A;
+  --text: #D6BD98;
+
+  /* derived */
+  --bg: #142727;
+  --surface: #1A3636;
+  --surface-2: #40534C;
+  --border: rgba(214, 189, 152, 0.15);
+
+  --danger: #ff5c5c;
+  --success: #3ddc97;
+
+  --radius: 12px;
+  --shadow: 0 6px 18px rgba(0,0,0,0.35);
+}
+
+/* =====================
+   RESET
+   ===================== */
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: Arial, Helvetica, sans-serif;
 }
 
 body {
-  background-color: #f5f6fa;
-  color: #2c3e50;
+  font-family: system-ui, Arial;
+  background: var(--bg);
+  color: var(--text);
 }
 
-/* layout base */
+/* =====================
+   LAYOUT
+   ===================== */
+
 .container {
-  max-width: 900px;
+  max-width: 1100px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 24px;
 }
 
-/* buttons */
-button {
-  padding: 10px 15px;
+.content {
+  padding: 24px;
+}
+
+/* =====================
+   CARDS
+   ===================== */
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  box-shadow: var(--shadow);
+}
+
+/* =====================
+   BUTTONS
+   ===================== */
+
+button, .btn {
+  background: var(--tertiary);
+  color: var(--text);
   border: none;
+  padding: 10px 14px;
+  border-radius: var(--radius);
   cursor: pointer;
-  border-radius: 6px;
-  background-color: #2d6cdf;
-  color: white;
+  transition: 0.2s;
 }
 
 button:hover {
-  background-color: #1b4fa8;
+  background: var(--secondary);
 }
 
-/* inputs */
-input {
-  padding: 10px;
-  margin: 5px 0;
+/* danger */
+.delete-btn {
+  background: var(--danger);
+  color: white;
+}
+
+/* =====================
+   INPUTS
+   ===================== */
+
+input, select, textarea {
   width: 100%;
-  border: 1px solid #ccc;
-  border-radius: 6px;
+  padding: 10px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text);
+}
+
+/* =====================
+   NAVBAR
+   ===================== */
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 14px 24px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.navbar a {
+  color: var(--text);
+  margin-right: 12px;
+  text-decoration: none;
+  opacity: 0.85;
+}
+
+.navbar a:hover {
+  opacity: 1;
+}
+
+/* =====================
+   LIST CARDS (SIGHTINGS / SPECIES)
+   ===================== */
+
+.sightings-list,
+.list {
+  display: grid;
+  gap: 12px;
+}
+
+.sighting-card,
+.species-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 14px;
+  border-radius: var(--radius);
+}
+
+/* =====================
+   FORMS
+   ===================== */
+
+.form-container,
+.auth-container {
+  max-width: 520px;
+  margin: 40px auto;
+}
+
+label {
+  display: block;
+  margin-top: 10px;
+  margin-bottom: 4px;
+}
+
+/* =====================
+   STATS
+   ===================== */
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+@media (max-width: 767px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =====================
+   RESPONSIVE FIX
+   ===================== */
+
+@media (max-width: 767px) {
+  .container {
+    padding: 14px;
+  }
+
+  .navbar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
 }

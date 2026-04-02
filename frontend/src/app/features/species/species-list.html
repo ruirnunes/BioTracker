@@ -1,11 +1,6 @@
 <div class="list-container">
   <h2>Species</h2>
 
-  <!-- ADD BUTTON -->
-  <a class="add-btn" routerLink="/species/new">
-    + Add Species
-  </a>
-
   <!-- FILTERS -->
   <div class="filters">
 
@@ -24,6 +19,10 @@
 
     <button (click)="applyFilters()">Apply</button>
     <button (click)="clearFilters()">Reset</button>
+
+    <a class="add-btn" routerLink="/species/new">
+      + Add Species
+    </a>
 
   </div>
 
@@ -55,11 +54,11 @@
           {{ item.genus }} {{ item.species }}
         </p>
 
-        <div class="actions">
-          <a [routerLink]="['/species', item.id, 'edit']">
-            Edit
-          </a>
-        </div>
+      <div class="actions">
+        <a class="view-btn" [routerLink]="['/species', item.id]">
+          View details
+        </a>
+      </div>
 
       </a>
     }

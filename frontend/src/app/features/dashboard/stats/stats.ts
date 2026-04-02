@@ -5,7 +5,12 @@ import { ApiService } from '../../../core/services/api';
 interface Stats {
   totalSightings: number;
   distinctSpecies: number;
-  sightingsPerType: Record<string, number>;
+
+  sightingsPerType: {
+    animal: number;
+    plant: number;
+    fungus: number;
+  };
 
   mostActiveUser: {
     id: string;
@@ -35,13 +40,12 @@ interface Stats {
   styleUrl: './stats.css',
 })
 export class StatsComponent implements OnInit {
+
   private api = inject(ApiService);
 
-  stats: Stats | null = null;
+  stats = signal<Stats | null>(null);
   loading = signal(true);
   error = signal('');
-
-  objectKeys = Object.keys;
 
   ngOnInit(): void {
     this.loadStats();
@@ -53,7 +57,7 @@ export class StatsComponent implements OnInit {
 
     this.api.get<Stats>('/users/me/stats').subscribe({
       next: (data) => {
-        this.stats = data;
+        this.stats.set(data);
         this.loading.set(false);
       },
       error: () => {

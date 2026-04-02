@@ -1,11 +1,10 @@
 <div class="sightings-page">
 
+  <!-- PAGE TITLE -->
+  <h2 class="page-title">Sightings</h2>
+
   <!-- CONTROLS -->
   <div class="sightings-controls">
-
-    <button type="button" (click)="toggleMySightings()">
-      {{ showMineOnly() ? 'Show all sightings' : 'My sightings' }}
-    </button>
 
     <input
       type="text"
@@ -13,11 +12,14 @@
       (input)="onSearch($event)"
     />
 
+    <button type="button" (click)="toggleMySightings()">
+      {{ showMineOnly() ? 'Show all sightings' : 'My sightings' }}
+    </button>
+
     <button type="button" (click)="toggleSort()">
       Sort by date: {{ sortDesc() ? 'Newest' : 'Oldest' }}
     </button>
 
-    <!-- 👇 ESTE É O NOVO BOTÃO -->
     <button
       type="button"
       class="add-btn"
@@ -37,6 +39,10 @@
 
         <h3>{{ sighting.species?.common_name || 'Unknown species' }}</h3>
 
+        <span class="badge" [ngClass]="sighting.species?.type">
+          {{ sighting.species?.type }}
+        </span>
+
         <p><strong>Location:</strong> {{ sighting.location }}</p>
 
         <p>
@@ -49,9 +55,11 @@
           {{ sighting.users?.name || 'Unknown user' }}
         </p>
 
-        <a [routerLink]="['/sightings', sighting.id]">
-          View details
-        </a>
+        <div class="card-footer">
+          <a [routerLink]="['/sightings', sighting.id]" class="view-btn">
+            View details
+          </a>
+        </div>
 
       </div>
 

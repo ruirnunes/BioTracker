@@ -1,66 +1,154 @@
-:host {
-  display: block;
-  padding: 24px;
-  max-width: 900px;
-  margin: 0 auto;
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-}
-
-.loading,
-.error {
-  text-align: center;
-  padding: 24px;
-  border-radius: 12px;
-  margin-top: 16px;
-}
-
-.loading {
-  background: #f3f4f6;
-  color: #374151;
-}
-
-.error {
-  background: #fee2e2;
-  color: #991b1b;
-}
-
 .species-detail {
+  max-width: 800px;
+  margin: 0 auto;
+  color: var(--text);
+}
+
+/* =========================
+   HEADER
+   ========================= */
+
+.header {
   display: flex;
-  flex-direction: column;
-  gap: 16px;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-bottom: 16px;
 }
 
-h1 {
-  font-size: 2rem;
+.header h1 {
+  font-size: 1.8rem;
   margin: 0;
-  color: #111827;
 }
 
-img {
-  width: 100%;
-  max-height: 420px;
-  object-fit: cover;
-  border-radius: 16px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+/* =========================
+   BADGE
+   ========================= */
+
+.badge {
+  padding: 6px 10px;
+  border-radius: 10px;
+  font-size: 0.8rem;
+
+  background: var(--surface-2);
+  text-transform: capitalize;
 }
 
-.info {
-  background: #f9fafb;
-  padding: 16px;
+/* type accents */
+.badge.animal {
+  background: #2ecc71;
+  color: #0b1f14;
+}
+
+.badge.plant {
+  background: #27ae60;
+  color: #0b1f14;
+}
+
+.badge.fungus {
+  background: #9b59b6;
+  color: white;
+}
+
+/* =========================
+   CARD CONTAINER
+   ========================= */
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: 12px;
-  border: 1px solid #e5e7eb;
+
+  padding: 16px;
+}
+
+/* info blocks */
+.info {
+  margin-bottom: 14px;
 }
 
 .info h3 {
-  margin: 0 0 8px 0;
-  font-size: 1rem;
-  color: #374151;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  margin: 0 0 6px 0;
+  font-size: 0.9rem;
+  opacity: 0.7;
 }
 
 .info p {
   margin: 0;
-  color: #111827;
-  line-height: 1.5;
+  font-size: 1rem;
+}
+
+/* =========================
+   ACTIONS
+   ========================= */
+
+.actions {
+  display: flex;
+  gap: 10px;
+
+  margin-top: 18px;
+}
+
+/* shared button style */
+.btn {
+  padding: 10px 14px;
+  border-radius: 10px;
+
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+
+  font-size: 0.9rem;
+}
+
+/* edit */
+.btn.edit {
+  background: var(--secondary);
+  color: var(--text);
+}
+
+/* delete */
+.btn.delete {
+  background: #c0392b;
+  color: white;
+}
+
+/* hover */
+.btn:hover {
+  opacity: 0.9;
+}
+
+/* =========================
+   STATES
+   ========================= */
+
+.loading {
+  text-align: center;
+  padding: 20px;
+  opacity: 0.7;
+}
+
+.error {
+  color: #e74c3c;
+  padding: 10px 0;
+}
+
+/* =========================
+   RESPONSIVE
+   ========================= */
+
+@media (max-width: 767px) {
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .actions {
+    flex-direction: column;
+  }
+
+  .btn {
+    width: 100%;
+  }
 }

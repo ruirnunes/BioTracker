@@ -1,153 +1,168 @@
 .sightings-page {
-  max-width: 1000px;
-  margin: 40px auto;
-  padding: 20px;
-  color: #1f2937; /* garante legibilidade base */
+  max-width: 1100px;
+  margin: 0 auto;
 }
 
-/* =======================
-   CONTROLS BAR
-======================= */
+/* =========================
+   TITLE
+   ========================= */
+
+.page-title {
+  margin: 0 0 16px 0;
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+/* =========================
+   CONTROLS
+   ========================= */
+
 .sightings-controls {
   display: flex;
-  gap: 12px;
   flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-
-  margin-bottom: 20px;
-  padding: 12px;
-
-  border: 1px solid #e5e5e5;
-  border-radius: 10px;
-  background: #fafafa;
+  gap: 10px;
+  margin-bottom: 16px;
 }
 
-/* =======================
-   BUTTONS (FIX VISIBILIDADE)
-======================= */
-.sightings-controls button {
-  padding: 10px 14px;
-  border-radius: 8px;
-  border: 1px solid #d1d5db;
-
-  background-color: #ffffff;
-  color: #1f2937 !important; /* 🔥 evita CSS global a matar texto */
-  font-size: 14px;
-  font-weight: 500;
-
-  cursor: pointer;
-  transition: all 0.2s ease;
-
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-
-  white-space: nowrap;
-}
-
-.sightings-controls button:hover {
-  border-color: #2d6a4f;
-  color: #2d6a4f;
-  transform: translateY(-1px);
-}
-
-.sightings-controls button:active {
-  transform: translateY(0px);
-}
-
-/* foco acessibilidade */
-.sightings-controls button:focus {
-  outline: 2px solid rgba(45, 106, 79, 0.3);
-  outline-offset: 2px;
-}
-
-/* =======================
-   SEARCH INPUT
-======================= */
 .sightings-controls input {
+  flex: 1 1 100%;
+  min-width: 100%;
+  margin-bottom: 10px;
+}
+
+.sightings-controls button,
+.sightings-controls .add-btn {
   flex: 1;
-  min-width: 220px;
-
-  padding: 10px 12px;
-  border-radius: 8px;
-  border: 1px solid #ddd;
-
-  outline: none;
-
-  font-size: 14px;
-  color: #1f2937;
-  background: #fff;
 }
 
-.sightings-controls input:focus {
-  border-color: #2d6a4f;
-  box-shadow: 0 0 0 2px rgba(45, 106, 79, 0.15);
-}
+/* =========================
+   GRID
+   ========================= */
 
-
-
-/* =======================
-   LIST GRID
-======================= */
 .sightings-list {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 14px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 16px;
 }
 
-/* =======================
+/* =========================
    CARD
-======================= */
-.sighting-card {
-  padding: 16px;
-  border-radius: 10px;
-  border: 1px solid #e5e5e5;
-  background: #ffffff;
+   ========================= */
 
-  transition: all 0.2s ease;
+.sighting-card {
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+
+  padding: 14px;
+
+  min-height: 170px;
+
+  transition: 0.2s;
 }
 
 .sighting-card:hover {
   transform: translateY(-2px);
-  border-color: #2d6a4f;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
 }
 
-/* TITLE */
+/* title spacing for badge */
 .sighting-card h3 {
-  margin-bottom: 8px;
-  color: #2d6cdf;
+  margin: 0;
+  padding-right: 70px;
 }
 
-/* TEXT */
-.sighting-card p {
-  margin: 4px 0;
-  color: #2c3e50;
+/* =========================
+   BADGE
+   ========================= */
+
+.sighting-card .badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  text-transform: capitalize;
+
+  background: var(--surface-2);
+  color: var(--text);
 }
 
-/* LINK */
-.sighting-card a {
-  display: inline-block;
-  margin-top: 10px;
-  color: #2d6a4f;
+/* TYPE COLORS */
+
+.sighting-card .badge.animal {
+  background: rgba(52, 152, 219, 0.18);
+  color: #3498db;
+  border: 1px solid rgba(52, 152, 219, 0.35);
+}
+
+.sighting-card .badge.plant {
+  background: rgba(39, 174, 96, 0.18);
+  color: #27ae60;
+  border: 1px solid rgba(39, 174, 96, 0.35);
+}
+
+.sighting-card .badge.fungus {
+  background: rgba(155, 89, 182, 0.18);
+  color: #9b59b6;
+  border: 1px solid rgba(155, 89, 182, 0.35);
+}
+
+/* =========================
+   FOOTER (VIEW DETAILS BOTTOM RIGHT)
+   ========================= */
+
+.card-footer {
+  margin-top: auto;
+  display: flex;
+  justify-content: flex-start;
+}
+
+/* button */
+.view-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 8px 12px;
+  border-radius: 10px;
+
+  background: var(--secondary);
+  color: var(--text);
   text-decoration: none;
-  font-weight: 500;
+
+  font-size: 0.85rem;
+
+  transition: 0.2s;
 }
 
-.sighting-card a:hover {
-  text-decoration: underline;
+.view-btn:hover {
+  background: var(--tertiary);
 }
 
-/* =======================
-   EMPTY / ERROR
-======================= */
-.error {
-  color: #c1121f;
-}
+/* =========================
+   RESPONSIVE
+   ========================= */
 
-.empty-state {
-  text-align: center;
-  padding: 20px;
-  color: #666;
+@media (max-width: 767px) {
+  .sightings-list {
+    grid-template-columns: 1fr;
+  }
+
+  .sightings-controls {
+    flex-direction: column;
+  }
+
+  .sightings-controls button,
+  .sightings-controls .add-btn {
+    width: 100%;
+  }
 }

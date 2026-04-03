@@ -6,13 +6,7 @@
     <app-loading message="Loading sighting details..."></app-loading>
   }
 
-  @if (error) {
-    <div class="error">
-      {{ error }}
-    </div>
-  }
-
-  @if (sighting && !loading()) {
+  @if (!loading() && sighting) {
     <div class="card">
 
       <h3>{{ sighting.species?.common_name }}</h3>
@@ -31,8 +25,7 @@
       </p>
 
       <p>
-        <strong>Date:</strong> {{ sighting.date | date }}
-      </p>
+        <strong>Date:</strong> {{ sighting.date | date }}</p>
 
       <p>
         <strong>Observed by:</strong>
@@ -42,7 +35,7 @@
       @if (sighting.image_url) {
         <img
           [src]="sighting.image_url"
-          alt="Photo of {{ sighting.species?.common_name }}"
+          [alt]="'Photo of ' + sighting.species?.common_name"
           class="image"
         />
       }
@@ -57,6 +50,12 @@
         </button>
       </div>
 
+    </div>
+  }
+
+  @if (error()) {
+    <div class="error">
+      {{ error() }}
     </div>
   }
 

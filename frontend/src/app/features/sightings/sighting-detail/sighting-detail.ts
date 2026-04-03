@@ -1,14 +1,14 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { LoadingComponent } from '../../../shared/components/loading/loading';
-
+import { RouterModule, Router, ActivatedRoute } from '@angular/router';
 import { ApiService } from '../../../core/services/api';
 import { Sighting } from '../../../shared/models/sighting.model';
+import { LoadingComponent } from '../../../shared/components/loading/loading';
 
 @Component({
   selector: 'app-sighting-detail',
-  imports: [CommonModule, RouterLink, LoadingComponent],
+  standalone: true,
+  imports: [CommonModule, RouterModule, LoadingComponent],
   templateUrl: './sighting-detail.html',
   styleUrl: './sighting-detail.css',
 })
@@ -18,50 +18,56 @@ export class SightingDetailComponent implements OnInit {
   private router = inject(Router);
 
   sighting: Sighting | null = null;
+
   loading = signal(true);
-  error = '';
+  error = signal<string>('');   // 👈 transformado em signal
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
 
     if (!id) {
-      this.error = 'Invalid sighting ID';
+      this.error.set('Invalid sighting ID');
       this.loading.set(false);
       return;
     }
-
-    this.loadSighting(id);
-  }
-
-  loadSighting(id: string): void {
-    this.loading.set(true);
 
     this.api.get<Sighting>(`/sightings/${id}`).subscribe({
       next: (data) => {
         this.sighting = data;
         this.loading.set(false);
       },
-      error: () => {
-        this.error = 'Failed to load sighting';
+      error: (err) => {
         this.loading.set(false);
-      },
+
+        if (err.status === 404) {
+          this.error.set('Sighting not found');
+          return;
+        }
+
+        this.error.set(err.error?.error || 'Failed to load sighting');
+      }
     });
   }
 
-  // DELETE
   delete(): void {
     if (!this.sighting?.id) return;
-
-    const confirmDelete = confirm('Are you sure you want to delete this sighting?');
-
-    if (!confirmDelete) return;
 
     this.api.delete(`/sightings/${this.sighting.id}`).subscribe({
       next: () => {
         this.router.navigate(['/sightings']);
       },
-      error: () => {
-        this.error = 'Failed to delete sighting';
+      error: (err) => {
+        if (err.status === 403) {
+          this.error.set('You are not allowed to delete this sighting');
+          return;
+        }
+
+        if (err.status === 404) {
+          this.error.set('Sighting not found');
+          return;
+        }
+
+        this.error.set(err.error?.error || 'Delete failed');
       }
     });
   }

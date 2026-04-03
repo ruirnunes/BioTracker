@@ -47,7 +47,7 @@ export const routes: Routes = [
     ],
   },
 
-  // SPECIES (ORDEM CORRETA 👇)
+  // SPECIES 
   {
     path: 'species/new',
     canActivate: [authGuard],

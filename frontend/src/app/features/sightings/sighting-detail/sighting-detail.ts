@@ -20,7 +20,7 @@ export class SightingDetailComponent implements OnInit {
   sighting: Sighting | null = null;
 
   loading = signal(true);
-  error = signal<string>('');   // 👈 transformado em signal
+  error = signal<string>('');  
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');

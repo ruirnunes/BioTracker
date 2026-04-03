@@ -2,6 +2,7 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
+import { HttpErrorResponse } from '@angular/common/http';
 
 import { ApiService } from '../../../core/services/api';
 import { Species } from '../../../shared/models/species.model';
@@ -9,6 +10,7 @@ import { Sighting } from '../../../shared/models/sighting.model';
 
 @Component({
   selector: 'app-sighting-form',
+  standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './sighting-form.html',
   styleUrl: './sighting-form.css',
@@ -21,20 +23,16 @@ export class SightingFormComponent implements OnInit {
 
   speciesList = signal<Species[]>([]);
 
-  loading = false;
+  loading = signal(false);
   error = '';
   submitted = false;
 
-  // EDIT MODE
   isEdit = false;
   id: string | null = null;
 
   form = this.fb.group({
     species_id: ['', Validators.required],
-    location: [
-      '',
-      [Validators.required, Validators.minLength(3), Validators.maxLength(120)]
-    ],
+    location: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(120)]],
     date: ['', Validators.required],
     image_url: ['']
   });
@@ -50,9 +48,16 @@ export class SightingFormComponent implements OnInit {
     this.loadSpecies();
   }
 
+  private handleError(err: HttpErrorResponse, fallback: string) {
+    this.error =
+      (err.error as { error?: string; message?: string })?.error ||
+      (err.error as { error?: string; message?: string })?.message ||
+      fallback;
+  }
+
   loadSpecies(): void {
     this.api.get<Species[]>('/species').subscribe({
-      next: (data) => (this.speciesList.set(data)),
+      next: (data) => this.speciesList.set(data),
       error: () => (this.error = 'Failed to load species'),
     });
   }
@@ -67,7 +72,12 @@ export class SightingFormComponent implements OnInit {
           image_url: data.image_url
         });
       },
-      error: () => {
+      error: (err: HttpErrorResponse) => {
+        if (err.status === 404) {
+          this.error = 'Sighting not found.';
+          return;
+        }
+
         this.error = 'Failed to load sighting';
       }
     });
@@ -85,7 +95,6 @@ export class SightingFormComponent implements OnInit {
 
     const value = this.form.value;
 
-    // Prevent future dates
     const selectedDate = new Date(value.date!);
     const today = new Date();
 
@@ -94,7 +103,7 @@ export class SightingFormComponent implements OnInit {
       return;
     }
 
-    this.loading = true;
+    this.loading.set(true);
 
     const request = this.isEdit
       ? this.api.put(`/sightings/${this.id}`, value)
@@ -102,12 +111,23 @@ export class SightingFormComponent implements OnInit {
 
     request.subscribe({
       next: () => {
-        this.loading = false;
+        this.loading.set(false);
         this.router.navigate(['/sightings']);
       },
-      error: (err) => {
-        this.loading = false;
-        this.error = err.error?.message ?? 'Operation failed';
+      error: (err: HttpErrorResponse) => {
+        this.loading.set(false);
+
+        if (err.status === 403) {
+          this.handleError(err, 'You are not allowed to edit this sighting.');
+          return;
+        }
+
+        if (err.status === 404) {
+          this.handleError(err, 'Sighting not found.');
+          return;
+        }
+
+        this.handleError(err, 'Operation failed');
       },
     });
   }

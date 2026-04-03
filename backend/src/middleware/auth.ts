@@ -21,7 +21,6 @@ export const auth = async (
       return res.status(401).json({ error: 'Invalid token' });
     }
 
-    // aqui já funciona porque fizemos module augmentation
     req.user = {
       id: data.user.id,
       email: data.user.email,

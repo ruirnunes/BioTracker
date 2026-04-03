@@ -4,13 +4,11 @@
   padding: 20px;
 }
 
-/* título */
 .detail-container h2 {
   margin-bottom: 16px;
   color: var(--text);
 }
 
-/* CARD PRINCIPAL */
 .card {
   display: flex;
   flex-direction: column;
@@ -23,14 +21,12 @@
   padding: 18px;
 }
 
-/* remove spacing extra dos parágrafos */
 .card p {
   margin: 0;
   line-height: 1.4;
   color: var(--text);
 }
 
-/* imagem */
 .image {
   width: 100%;
   border-radius: 12px;
@@ -44,7 +40,6 @@
   margin-top: 14px;
 }
 
-/* botões base */
 .btn {
   padding: 10px 14px;
   border-radius: 10px;
@@ -62,13 +57,11 @@
   opacity: 0.9;
 }
 
-/* delete destacado */
 .delete {
   background: var(--danger);
   color: white;
 }
 
-/* erro */
 .error {
   color: #e74c3c;
 }

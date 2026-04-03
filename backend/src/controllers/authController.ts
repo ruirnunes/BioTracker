@@ -65,7 +65,7 @@ export const register = async (req: Request, res: Response) => {
   try {
     const { email, password, name } = req.body;
 
-    // ✅ Require name
+    // Require name
     if (!email || !password || !name || name.trim().length < 3) {
       return res.status(400).json({
         message: 'Name, email and password are required (name must be at least 3 characters)',
@@ -123,7 +123,7 @@ export const register = async (req: Request, res: Response) => {
       });
     }
 
-    // ✅ ALWAYS insert real name (no fallback to Anonymous)
+    // ALWAYS insert real name (no fallback to Anonymous)
     const { error: userError } = await supabase.from('users').insert([
       {
         id: data.user.id,

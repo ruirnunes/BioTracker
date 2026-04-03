@@ -44,14 +44,16 @@
     <input id="image_url" type="text" formControlName="image_url" />
 
     <!-- Submit -->
-    <button type="submit" [disabled]="loading">
-      {{ loading 
+    <button type="submit" [disabled]="loading()">
+      {{ loading() 
         ? (isEdit ? 'Updating...' : 'Creating...') 
         : (isEdit ? 'Update Sighting' : 'Create Sighting') }}
     </button>
 
     @if (error) {
-      <p class="error">{{ error }}</p>
+      <p class="error">
+        {{ error }}
+      </p>
     }
 
   </form>

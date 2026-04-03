@@ -17,13 +17,10 @@ const getTokenFromRequest = (req: Request): string | null => {
   return authHeader.replace('Bearer ', '');
 };
 
-// GET all sightings (only logged user)
+// GET all sightings
 export const getSightings = async (req: Request, res: Response) => {
   const token = getTokenFromRequest(req);
-
-  if (!token) {
-    return res.status(401).json({ error: 'No token provided' });
-  }
+  if (!token) return res.status(401).json({ error: 'No token provided' });
 
   const supabase = supabaseWithAuth(token);
 
@@ -34,35 +31,20 @@ export const getSightings = async (req: Request, res: Response) => {
       location,
       date,
       image_url,
-      users:user_id (
-        id,
-        name
-      ),
-      species:species_id (
-        id,
-        common_name,
-        genus,
-        species,
-        type
-      )
+      users:user_id (id, name),
+      species:species_id (id, common_name, genus, species, type)
     `)
     .order('created_at', { ascending: false });
 
-  if (error) {
-    console.error('Supabase error:', error);
-    return res.status(500).json({ error: error.message });
-  }
+  if (error) return res.status(500).json({ error: error.message });
 
   res.json(data);
 };
 
-// GET one sighting (only owner)
+// GET by id
 export const getSightingById = async (req: Request, res: Response) => {
   const token = getTokenFromRequest(req);
-
-  if (!token) {
-    return res.status(401).json({ error: 'No token provided' });
-  }
+  if (!token) return res.status(401).json({ error: 'No token provided' });
 
   const supabase = supabaseWithAuth(token);
   const { id } = req.params;
@@ -75,17 +57,8 @@ export const getSightingById = async (req: Request, res: Response) => {
       location,
       date,
       image_url,
-      species:species_id (
-        id,
-        common_name,
-        genus,
-        species,
-        type
-      ),
-      users:user_id (
-        id,
-        name
-      )
+      species:species_id (id, common_name, genus, species, type),
+      users:user_id (id, name)
     `)
     .eq('id', id)
     .single();
@@ -100,10 +73,7 @@ export const getSightingById = async (req: Request, res: Response) => {
 // CREATE
 export const createSighting = async (req: Request, res: Response) => {
   const token = getTokenFromRequest(req);
-
-  if (!token) {
-    return res.status(401).json({ error: 'No token provided' });
-  }
+  if (!token) return res.status(401).json({ error: 'No token provided' });
 
   const supabase = supabaseWithAuth(token);
   const user = (req as any).user;
@@ -128,21 +98,15 @@ export const createSighting = async (req: Request, res: Response) => {
     .select()
     .single();
 
-  if (error) {
-    console.error('Supabase error:', error);
-    return res.status(500).json({ error: error.message });
-  }
+  if (error) return res.status(500).json({ error: error.message });
 
   res.status(201).json(data);
 };
 
-// UPDATE (owner only)
+// UPDATE (FIXED)
 export const updateSighting = async (req: Request, res: Response) => {
   const token = getTokenFromRequest(req);
-
-  if (!token) {
-    return res.status(401).json({ error: 'No token provided' });
-  }
+  if (!token) return res.status(401).json({ error: 'No token provided' });
 
   const supabase = supabaseWithAuth(token);
   const user = (req as any).user;
@@ -151,11 +115,25 @@ export const updateSighting = async (req: Request, res: Response) => {
   const { species_id, location, date, image_url } = req.body as Sighting;
 
   const updatePayload: Partial<Sighting> = {};
-
   if (species_id !== undefined) updatePayload.species_id = species_id;
   if (location !== undefined) updatePayload.location = location;
   if (date !== undefined) updatePayload.date = date;
   if (image_url !== undefined) updatePayload.image_url = image_url;
+
+  // 1. check existence first (IMPORTANT for proper 404 vs 403)
+  const { data: existing } = await supabase
+    .from('sightings')
+    .select('id, user_id')
+    .eq('id', id)
+    .single();
+
+  if (!existing) {
+    return res.status(404).json({ error: 'Sighting not found' });
+  }
+
+  if (existing.user_id !== user.id) {
+    return res.status(403).json({ error: 'Not allowed to edit this sighting' });
+  }
 
   const { data, error } = await supabase
     .from('sightings')
@@ -165,56 +143,50 @@ export const updateSighting = async (req: Request, res: Response) => {
     .select()
     .single();
 
-  if (error) {
-    console.error('Supabase error:', error);
-    return res.status(500).json({ error: error.message });
-  }
-
-  if (!data) {
-    return res.status(404).json({ error: 'Not found or not allowed' });
-  }
+  if (error) return res.status(500).json({ error: error.message });
 
   res.json(data);
 };
 
-// DELETE (owner only)
+// DELETE (FIXED)
 export const deleteSighting = async (req: Request, res: Response) => {
   const token = getTokenFromRequest(req);
-
-  if (!token) {
-    return res.status(401).json({ error: 'No token provided' });
-  }
+  if (!token) return res.status(401).json({ error: 'No token provided' });
 
   const supabase = supabaseWithAuth(token);
   const user = (req as any).user;
   const { id } = req.params;
 
-  const { data, error } = await supabase
+  // 1. check existence first
+  const { data: existing } = await supabase
+    .from('sightings')
+    .select('id, user_id')
+    .eq('id', id)
+    .single();
+
+  if (!existing) {
+    return res.status(404).json({ error: 'Sighting not found' });
+  }
+
+  if (existing.user_id !== user.id) {
+    return res.status(403).json({ error: 'Not allowed to delete this sighting' });
+  }
+
+  const { error } = await supabase
     .from('sightings')
     .delete()
     .eq('id', id)
-    .eq('user_id', user.id)
-    .select();
+    .eq('user_id', user.id);
 
-  if (error) {
-    console.error('Supabase error:', error);
-    return res.status(500).json({ error: error.message });
-  }
-
-  if (!data || data.length === 0) {
-    return res.status(404).json({ error: 'Not found or not allowed' });
-  }
+  if (error) return res.status(500).json({ error: error.message });
 
   res.json({ message: 'Deleted successfully' });
 };
 
-// STATS (GLOBAL)
+// STATS (unchanged)
 export const getStats = async (req: Request, res: Response) => {
   const token = getTokenFromRequest(req);
-
-  if (!token) {
-    return res.status(401).json({ error: 'No token provided' });
-  }
+  if (!token) return res.status(401).json({ error: 'No token provided' });
 
   const supabase = supabaseWithAuth(token);
 
@@ -227,21 +199,11 @@ export const getStats = async (req: Request, res: Response) => {
       location,
       date,
       created_at,
-      species:species_id (
-        id,
-        type,
-        common_name
-      ),
-      users:user_id (
-        id,
-        name
-      )
+      species:species_id (id, type, common_name),
+      users:user_id (id, name)
     `);
 
-  if (error) {
-    console.error('Supabase error:', error);
-    return res.status(500).json({ error: error.message });
-  }
+  if (error) return res.status(500).json({ error: error.message });
 
   const sightings = data ?? [];
 
@@ -291,10 +253,9 @@ export const getStats = async (req: Request, res: Response) => {
   }
 
   const latestSightings = [...(sightings as any[])]
-    .sort(
-      (a, b) =>
-        new Date(b.created_at).getTime() -
-        new Date(a.created_at).getTime()
+    .sort((a, b) =>
+      new Date(b.created_at).getTime() -
+      new Date(a.created_at).getTime()
     )
     .slice(0, 5);
 

@@ -6,11 +6,9 @@ interface Stats {
   totalSightings: number;
   distinctSpecies: number;
 
-  sightingsPerType: {
-    animal: number;
-    plant: number;
-    fungus: number;
-  };
+  mySightings: number;
+
+  sightingsPerType: Record<string, number>;
 
   mostActiveUser: {
     id: string;
@@ -26,11 +24,43 @@ interface Stats {
     species: {
       id: string;
       common_name: string;
-      genus: string;
-      species: string;
       type: string;
     };
+    users: {
+      id: string;
+      name: string;
+    };
   }[];
+}
+
+interface GlobalStats {
+  totalSightings: number;
+  distinctSpecies: number;
+  sightingsPerType: Record<string, number>;
+  mostActiveUser: {
+    id: string;
+    name: string;
+    sightingsCount: number;
+  } | null;
+  latestSightings: {
+    id: string;
+    location: string;
+    date: string;
+    created_at: string;
+    species: {
+      id: string;
+      common_name: string;
+      type: string;
+    };
+    users: {
+      id: string;
+      name: string;
+    };
+  }[];
+}
+
+interface UserStats {
+  mySightings: number;
 }
 
 @Component({
@@ -55,15 +85,25 @@ export class StatsComponent implements OnInit {
     this.loading.set(true);
     this.error.set('');
 
-    this.api.get<Stats>('/users/me/stats').subscribe({
-      next: (data) => {
-        this.stats.set(data);
+    Promise.all([
+      this.api.get<GlobalStats>('/sightings/stats').toPromise(),
+      this.api.get<UserStats>('/users/me/stats').toPromise()
+    ])
+      .then(([globalStats, userStats]) => {
+        if (!globalStats || !userStats) {
+          throw new Error('Invalid data');
+        }
+
+        this.stats.set({
+          ...globalStats,
+          mySightings: userStats.mySightings
+        });
+
         this.loading.set(false);
-      },
-      error: () => {
+      })
+      .catch(() => {
         this.error.set('Failed to load stats');
         this.loading.set(false);
-      },
-    });
+      });
   }
 }

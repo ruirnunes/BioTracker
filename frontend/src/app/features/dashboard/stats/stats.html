@@ -16,7 +16,7 @@
     <div class="stats-row">
 
       <div class="card stat-card">
-        <h3>My Sightings</h3>
+        <h3>Total Sightings</h3>
         <p>{{ stats()!.totalSightings }}</p>
       </div>
 
@@ -56,16 +56,16 @@
 
     </div>
 
-    <!-- ROW 3: LATEST SIGHTINGS -->
+    <!-- ROW 3 -->
     <div class="latest-card">
 
       <h3>Latest Sightings</h3>
 
       <div class="latest-list">
 
-        @if (stats()!.latestSightings.length) {
+        @if (stats()?.latestSightings?.length) {
 
-          @for (sighting of stats()!.latestSightings; track sighting.id) {
+          @for (sighting of stats()?.latestSightings ?? []; track sighting.id) {
 
             <div class="sighting-card">
 

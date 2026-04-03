@@ -150,7 +150,7 @@ export const updateSighting = async (req: Request, res: Response) => {
 
   const { species_id, location, date, image_url } = req.body as Sighting;
 
-  const updatePayload: any = {};
+  const updatePayload: Partial<Sighting> = {};
 
   if (species_id !== undefined) updatePayload.species_id = species_id;
   if (location !== undefined) updatePayload.location = location;
@@ -208,7 +208,7 @@ export const deleteSighting = async (req: Request, res: Response) => {
   res.json({ message: 'Deleted successfully' });
 };
 
-// STATS
+// STATS (GLOBAL)
 export const getStats = async (req: Request, res: Response) => {
   const token = getTokenFromRequest(req);
 
@@ -220,36 +220,56 @@ export const getStats = async (req: Request, res: Response) => {
 
   const { data, error } = await supabase
     .from('sightings')
-    .select('user_id, species_id');
+    .select(`
+      id,
+      user_id,
+      species_id,
+      location,
+      date,
+      created_at,
+      species:species_id (
+        id,
+        type,
+        common_name
+      ),
+      users:user_id (
+        id,
+        name
+      )
+    `);
 
   if (error) {
     console.error('Supabase error:', error);
     return res.status(500).json({ error: error.message });
   }
 
-  const sightings = data || [];
+  const sightings = data ?? [];
 
   const totalSightings = sightings.length;
 
   const distinctSpecies = new Set(
-    sightings.map(s => s.species_id)
+    sightings.map((s: any) => s.species_id)
   ).size;
 
-  const userCountMap: Record<string, number> = {};
+  const sightingsPerType: Record<string, number> = {};
 
-  for (const s of sightings) {
-    if (!userCountMap[s.user_id]) {
-      userCountMap[s.user_id] = 0;
-    }
-    userCountMap[s.user_id]++;
+  for (const s of sightings as any[]) {
+    const type = s.species?.type ?? 'unknown';
+    sightingsPerType[type] = (sightingsPerType[type] || 0) + 1;
+  }
+
+  const userCount: Record<string, number> = {};
+
+  for (const s of sightings as any[]) {
+    userCount[s.user_id] = (userCount[s.user_id] || 0) + 1;
   }
 
   let mostActiveUserId: string | null = null;
   let maxCount = 0;
 
-  for (const userId in userCountMap) {
-    if (userCountMap[userId] > maxCount) {
-      maxCount = userCountMap[userId];
+  for (const userId in userCount) {
+    if (userCount[userId] > maxCount) {
+      maxCount = userCount[userId];
       mostActiveUserId = userId;
     }
   }
@@ -257,24 +277,32 @@ export const getStats = async (req: Request, res: Response) => {
   let mostActiveUser = null;
 
   if (mostActiveUserId) {
-    const { data: userData } = await supabase
-      .from('users')
-      .select('id, name')
-      .eq('id', mostActiveUserId)
-      .single();
+    const found = (sightings as any[]).find(
+      s => s.user_id === mostActiveUserId
+    )?.users;
 
-    mostActiveUser = userData;
+    if (found) {
+      mostActiveUser = {
+        id: found.id,
+        name: found.name,
+        sightingsCount: maxCount
+      };
+    }
   }
+
+  const latestSightings = [...(sightings as any[])]
+    .sort(
+      (a, b) =>
+        new Date(b.created_at).getTime() -
+        new Date(a.created_at).getTime()
+    )
+    .slice(0, 5);
 
   res.json({
     totalSightings,
     distinctSpecies,
-    mostActiveUser: mostActiveUser
-      ? {
-          id: mostActiveUser.id,
-          name: mostActiveUser.name,
-          sightingsCount: maxCount
-        }
-      : null
+    sightingsPerType,
+    mostActiveUser,
+    latestSightings
   });
 };

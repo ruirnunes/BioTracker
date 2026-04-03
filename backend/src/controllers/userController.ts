@@ -78,80 +78,18 @@ export const getUserStats = async (req: AuthRequest, res: Response) => {
     return res.status(401).json({ error: 'Unauthenticated' });
   }
 
-  const { data: sightings, error } = await supabase
+  const { data, error } = await supabase
     .from('sightings')
-    .select(`
-      id,
-      location,
-      date,
-      created_at,
-      species!inner (
-        id,
-        common_name,
-        genus,
-        species,
-        type
-      )
-    `)
-    .eq('user_id', user.id)
-    .returns<Sighting[]>();
+    .select('id')
+    .eq('user_id', user.id);
 
   if (error) {
     return res.status(500).json({ error: error.message });
   }
 
-  const safe = sightings ?? [];
-
-  // GET USER NAME
-  const { data: userData, error: userError } = await supabase
-    .from('users')
-    .select('name')
-    .eq('id', user.id)
-    .single();
-
-  if (userError) {
-    return res.status(500).json({ error: userError.message });
-  }
-
-  // TOTAL SIGHTINGS
-  const totalSightings = safe.length;
-
-  // DISTINCT SPECIES
-  const distinctSpecies = new Set(
-    safe.map(s => s.species.id)
-  ).size;
-
-  // SPECIES PER TYPE
-  const sightingsPerType: Record<string, number> = {};
-
-  for (const s of safe) {
-    const type = s.species.type || 'unknown';
-
-    sightingsPerType[type] =
-      (sightingsPerType[type] || 0) + 1;
-  }
-
-  // MOST ACTIVE USER (SELF)
-  const mostActiveUser = {
-    id: user.id,
-    name: userData?.name ?? 'Unknown',
-    sightingsCount: totalSightings
-  };
-
-  // LATEST SIGHTINGS
-  const latestSightings = [...safe]
-    .sort(
-      (a, b) =>
-        new Date(b.created_at).getTime() -
-        new Date(a.created_at).getTime()
-    )
-    .slice(0, 5);
+  const mySightings = data?.length || 0;
 
   return res.json({
-    totalSightings,
-    distinctSpecies,
-    sightingsPerType,
-    mostActiveUser,
-    latestSightings
+    mySightings
   });
 };

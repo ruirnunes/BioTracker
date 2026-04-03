@@ -36,7 +36,7 @@ This project contributes to **ODS 15 — Life on Land** by promoting citizen par
 
 ## Live Application
 
-- Frontend: https://bio-tracker-1jb6nz7vu-ruirbnunes-8715s-projects.vercel.app  
+- Frontend: https://bio-tracker-smoky.vercel.app 
 - Backend: https://bio-tracker-viq9.onrender.com  
 
 ---

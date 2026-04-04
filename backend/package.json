@@ -6,7 +6,8 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/app.js",
-    "lint": "eslint src/**/*.ts"
+    "lint": "eslint src/**/*.ts",
+    "test": "jest"
   },
   "keywords": [],
   "author": "",
@@ -22,12 +23,15 @@
     "@eslint/js": "^10.0.1",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
+    "@types/jest": "^30.0.0",
     "@types/node": "^25.5.0",
     "@typescript-eslint/eslint-plugin": "^8.57.1",
     "@typescript-eslint/parser": "^8.57.1",
     "eslint": "^10.1.0",
     "globals": "^17.4.0",
+    "jest": "^30.3.0",
     "jiti": "^2.6.1",
+    "ts-jest": "^29.4.9",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.57.1"
   }

@@ -1,22 +1,25 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 
-import { SightingsList } from './sightings-list';
+import { SightingsListComponent } from './sightings-list';
 
-describe('SightingsList', () => {
-  let component: SightingsList;
-  let fixture: ComponentFixture<SightingsList>;
-
+describe('SightingsListComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [SightingsList],
+      imports: [SightingsListComponent],
+      providers: [
+        provideRouter([]),
+        {
+          provide: ActivatedRoute,
+          useValue: {}
+        }
+      ]
     }).compileComponents();
-
-    fixture = TestBed.createComponent(SightingsList);
-    component = fixture.componentInstance;
-    await fixture.whenStable();
   });
 
   it('should create', () => {
-    expect(component).toBeTruthy();
+    const fixture = TestBed.createComponent(SightingsListComponent);
+    expect(fixture.componentInstance).toBeTruthy();
   });
 });

@@ -1,18 +1,35 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ActivatedRoute } from '@angular/router';
+import { TEST_PROVIDERS } from '../../../../testing/test-providers';
 
-import { SpeciesDetail } from './species-detail';
+import { SpeciesDetailComponent } from './species-detail';
 
-describe('SpeciesDetail', () => {
-  let component: SpeciesDetail;
-  let fixture: ComponentFixture<SpeciesDetail>;
+describe('SpeciesDetailComponent', () => {
+  let component: SpeciesDetailComponent;
+  let fixture: ComponentFixture<SpeciesDetailComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [SpeciesDetail],
+      imports: [SpeciesDetailComponent],
+      providers: [
+        ...TEST_PROVIDERS,
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            snapshot: {
+              paramMap: {
+                get: () => '1'
+              }
+            }
+          }
+        }
+      ]
     }).compileComponents();
 
-    fixture = TestBed.createComponent(SpeciesDetail);
+    fixture = TestBed.createComponent(SpeciesDetailComponent);
     component = fixture.componentInstance;
+
+    fixture.detectChanges();
     await fixture.whenStable();
   });
 

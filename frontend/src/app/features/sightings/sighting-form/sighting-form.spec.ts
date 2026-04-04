@@ -1,22 +1,38 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { SightingFormComponent } from './sighting-form';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { ActivatedRoute } from '@angular/router';
 
-import { SightingForm } from './sighting-form';
-
-describe('SightingForm', () => {
-  let component: SightingForm;
-  let fixture: ComponentFixture<SightingForm>;
+describe('SightingFormComponent', () => {
+  let component: SightingFormComponent;
+  let fixture: ComponentFixture<SightingFormComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [SightingForm],
+      imports: [SightingFormComponent],
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            snapshot: {
+              paramMap: {
+                get: () => null
+              }
+            }
+          }
+        }
+      ]
     }).compileComponents();
 
-    fixture = TestBed.createComponent(SightingForm);
+    fixture = TestBed.createComponent(SightingFormComponent);
     component = fixture.componentInstance;
-    await fixture.whenStable();
+    fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it('should create the component', () => {
     expect(component).toBeTruthy();
   });
 });

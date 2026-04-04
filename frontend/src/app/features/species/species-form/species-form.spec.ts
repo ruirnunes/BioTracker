@@ -1,18 +1,35 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ActivatedRoute } from '@angular/router';
+import { TEST_PROVIDERS } from '../../../../testing/test-providers';
 
-import { SpeciesForm } from './species-form';
+import { SpeciesFormComponent } from './species-form';
 
-describe('SpeciesForm', () => {
-  let component: SpeciesForm;
-  let fixture: ComponentFixture<SpeciesForm>;
+describe('SpeciesFormComponent', () => {
+  let component: SpeciesFormComponent;
+  let fixture: ComponentFixture<SpeciesFormComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [SpeciesForm],
+      imports: [SpeciesFormComponent],
+      providers: [
+        ...TEST_PROVIDERS,
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            snapshot: {
+              paramMap: {
+                get: () => null
+              }
+            }
+          }
+        }
+      ]
     }).compileComponents();
 
-    fixture = TestBed.createComponent(SpeciesForm);
+    fixture = TestBed.createComponent(SpeciesFormComponent);
     component = fixture.componentInstance;
+
+    fixture.detectChanges();
     await fixture.whenStable();
   });
 
